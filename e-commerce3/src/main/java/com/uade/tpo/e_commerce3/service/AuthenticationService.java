@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import com.uade.tpo.e_commerce3.dto.DireccionDTO;
 import com.uade.tpo.e_commerce3.dto.LoginRequest;
 import com.uade.tpo.e_commerce3.dto.RegisterRequest;
+import com.uade.tpo.e_commerce3.exception.EmailAlreadyExistsException;
+import com.uade.tpo.e_commerce3.exception.UsuarioNotFoundException;
 import com.uade.tpo.e_commerce3.model.Direccion;
 import com.uade.tpo.e_commerce3.model.Role;
 import com.uade.tpo.e_commerce3.model.Usuario;
@@ -20,7 +22,7 @@ import com.uade.tpo.e_commerce3.security.JwtUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
-// CONFIGURAR EXCEPCIONES 
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -35,7 +37,7 @@ private final JwtUtil jwtUtil;
     public void register(RegisterRequest request) {
 
         if (usuarioRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("El email ya existe en la base de datos");
+            throw new EmailAlreadyExistsException(request.getEmail());
         }
 
         Usuario usuario = Usuario.builder()
@@ -61,7 +63,7 @@ private final JwtUtil jwtUtil;
                         request.getEmail(),
                         request.getPassword()));
 
-        Usuario user = usuarioRepository.findByEmail(request.getEmail()).orElseThrow();
+        Usuario user = usuarioRepository.findByEmail(request.getEmail()).orElseThrow(() -> new UsuarioNotFoundException(request.getEmail()));
 
         Set<String> roles = user.getAuthorities().stream()
                 .map(grantedAuthority -> grantedAuthority.getAuthority())
