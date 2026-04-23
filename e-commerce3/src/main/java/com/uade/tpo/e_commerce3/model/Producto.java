@@ -16,13 +16,23 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "productos")
-@Data
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(exclude = {"vendedor", "categorias"})
+@ToString(exclude = {"vendedor", "categorias"})
 public class Producto {
 
     @Id
@@ -47,15 +57,15 @@ public class Producto {
 
     private LocalDate fechaPublicacion;
 
-    // Un producto pertenece a un único vendedor.
-    // Si más adelante se necesita, se puede agregar la relación inversa en Usuario.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vendedor_id", nullable = false)
     private Usuario vendedor;
 
-    // Un producto puede pertenecer a varias categorías.
-    // Se mantiene ManyToMany porque en el dominio del marketplace
-    // un mismo producto puede clasificarse, por ejemplo, como "Relojes" y "Lujo".
+    /*
+     * Un producto puede pertenecer a varias categorías.
+     * Se mantiene ManyToMany porque en el dominio del marketplace
+     * un mismo producto puede clasificarse, por ejemplo, como "Relojes" y "Lujo".
+     */
     @ManyToMany
     @JoinTable(
         name = "producto_categoria",
