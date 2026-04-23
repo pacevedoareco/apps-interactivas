@@ -1,5 +1,5 @@
 package com.uade.tpo.e_commerce3.config;
-/* 
+
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -50,31 +50,35 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // http
-        //         .csrf(csrf -> csrf.disable())
-        //         .authorizeHttpRequests(auth -> auth
-        //                 // .requestMatchers("/api/productos/**").permitAll()
-        //                 .requestMatchers("/api/auth/**").permitAll()
-        //                 .anyRequest().authenticated());
-
-        // return http.build();
-
         http
-                .csrf(csrf -> csrf.disable())
-                // TODO: definir que endpoints son públicos, cuales requieren autenticación y cuales son exclusivos para admin
-                .authorizeHttpRequests(auth -> auth
+                    .csrf(csrf -> csrf.disable())
+                    .authorizeHttpRequests(auth -> auth
+                        // Públicos - Register/Login
                         .requestMatchers("/api/auth/**").permitAll()
+                        
+                        // Productos - GET Público, resto authenticated
                         .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/productos").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/productos/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/productos/**").authenticated()
-                        .requestMatchers("/api/admin/**").hasRole(Role.ADMIN.name())
-                        .requestMatchers("/api/pedidos/**").authenticated()
-                        .anyRequest().authenticated())
-                        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                        
+                        // Usuarios - GET público para ver perfil de vendedor, resto autenticado
+                        .requestMatchers(HttpMethod.GET, "/api/usuarios/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/usuarios/**").authenticated()
+                        
+                         // Carrito
+                        .requestMatchers("/api/carrito/**").authenticated()
 
+                        // Pedidos
+                        .requestMatchers("/api/pedidos/**").authenticated()
+                        
+                        // Admin - solo rol ADMIN
+                        .requestMatchers("/api/admin/**").hasRole(Role.ADMIN.name())
+                        
+                        .anyRequest().authenticated())
+                    .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                    
         return http.build();
     }
 }
 
-*/
