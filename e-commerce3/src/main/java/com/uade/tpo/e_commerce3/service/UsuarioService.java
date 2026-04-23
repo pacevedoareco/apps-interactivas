@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.uade.tpo.e_commerce3.dto.DireccionDTO;
 import com.uade.tpo.e_commerce3.dto.UsuarioResponseDTO;
 import com.uade.tpo.e_commerce3.dto.UsuarioUpdateDTO;
+import com.uade.tpo.e_commerce3.exception.UsuarioNotFoundException;
 import com.uade.tpo.e_commerce3.model.Direccion;
 //import com.uade.tpo.e_commerce3.model.Producto;
 import com.uade.tpo.e_commerce3.model.Usuario;
@@ -16,7 +17,6 @@ import com.uade.tpo.e_commerce3.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
-// CONFIGURAR EXCEPCIONES 
 
 @Service
 @Transactional
@@ -30,14 +30,14 @@ public class UsuarioService {
     //Lógica para: GET /api/usuarios/{id}
     public UsuarioResponseDTO getUsuarioById(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new UsuarioNotFoundException(id));
         return mapToUsuarioResponseDTO(usuario);
     }
 
     //Lógica para: PUT /api/usuarios/{id}
     public UsuarioResponseDTO updateUsuario(Long id, UsuarioUpdateDTO request) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new UsuarioNotFoundException(id));
 
         usuario.setNombre(request.getNombre());
         usuario.setApellido(request.getApellido());
@@ -63,7 +63,7 @@ public class UsuarioService {
     //Lógica para: PUT /api/usuarios/{id}/desactivar
     public void desactivarUsuario(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new UsuarioNotFoundException(id));
         usuario.setActivo(false);
         usuarioRepository.save(usuario);
     }
@@ -72,8 +72,17 @@ public class UsuarioService {
     //Lógica para: GET /api/usuarios/{id}/productos
     public List<Producto> getProductosPublicados(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new UsuarioNotFoundException(id));
         return usuario.getProductosPublicados();
+    }
+    */
+
+    /* 
+    //Lógica para: GET /api/usuarios/{id}/carrito
+    public Carrito getCarrito(Long id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new UsuarioNotFoundException(id));
+        return usuario.getCarrito();
     }
     */
 
@@ -81,7 +90,7 @@ public class UsuarioService {
     //Lógica para: GET /api/usuarios/{id}/pedidos
     public List<Pedido> getPedidos(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new UsuarioNotFoundException(id));
         return usuario.getPedidos();
     }
     */
@@ -99,14 +108,14 @@ public class UsuarioService {
     //Lógica para: GET /api/admin/usuarios/{id}
     public UsuarioResponseDTO getUsuarioByIdAdmin(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new UsuarioNotFoundException(id));
         return mapToUsuarioResponseDTO(usuario);
     }
 
     //Lógica para: PUT /api/admin/usuarios/{id}/desactivar
     public void desactivarUsuarioAdmin(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new UsuarioNotFoundException(id));
         usuario.setActivo(false);
         usuarioRepository.save(usuario);
     }
@@ -114,7 +123,7 @@ public class UsuarioService {
     //Lógica para: PUT /api/admin/usuarios/{id}/activar
     public void activarUsuarioAdmin(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new UsuarioNotFoundException(id));
         usuario.setActivo(true);
         usuarioRepository.save(usuario);
     }

@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.uade.tpo.e_commerce3.dto.UsuarioResponseDTO;
 import com.uade.tpo.e_commerce3.dto.UsuarioUpdateDTO;
-//import com.uade.tpo.e_commerce3.model.Producto;
 import com.uade.tpo.e_commerce3.service.UsuarioService;
 
 import lombok.RequiredArgsConstructor;
@@ -49,9 +48,14 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.getProductosPublicados(id));
     }
 */
-
 /* 
-@GetMapping("/usuarios/{id}/pedidos")
+    //@GetMapping("/api/usuarios/{id}/carrito")
+    //public ResponseEntity<Carrito> getCarrito(@PathVariable Long id) {
+    //    return ResponseEntity.ok(usuarioService.getCarrito(id));
+    //}
+*/
+/* 
+    @GetMapping("/usuarios/{id}/pedidos")
     public ResponseEntity<List<Pedido>> getPedidos(@PathVariable Long id) {
         return ResponseEntity.ok(usuarioService.getPedidos(id));
     }

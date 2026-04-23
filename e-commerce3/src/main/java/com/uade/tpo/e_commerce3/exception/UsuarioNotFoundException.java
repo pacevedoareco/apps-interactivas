@@ -1,5 +1,10 @@
 package com.uade.tpo.e_commerce3.exception;
 
-public class UsuarioNotFoundException {
-    
+public class UsuarioNotFoundException extends RuntimeException {
+    public UsuarioNotFoundException(Long id) {
+        super("Usuario no encontrado");
+    }
+    public UsuarioNotFoundException(String email) {
+        super("Usuario o contraseña incorrectos");
+    }
 }

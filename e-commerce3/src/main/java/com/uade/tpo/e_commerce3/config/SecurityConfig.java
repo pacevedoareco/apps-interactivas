@@ -1,6 +1,5 @@
 package com.uade.tpo.e_commerce3.config;
 
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -9,19 +8,18 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.uade.tpo.e_commerce3.exception.UsuarioNotFoundException;
 import com.uade.tpo.e_commerce3.model.Role;
 import com.uade.tpo.e_commerce3.repository.UsuarioRepository;
 import com.uade.tpo.e_commerce3.security.JwtFilter;
 
 import lombok.RequiredArgsConstructor;
 
-// CONFIGURAR BIEN
 
 @Configuration
 @EnableWebSecurity
@@ -34,8 +32,7 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> usuarioRepository.findByEmail(username)
-                //TODO: capturar con globalexceptionhanlder @ControllerAdivce
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UsuarioNotFoundException(username));
     }
 
     @Bean
@@ -77,7 +74,7 @@ public class SecurityConfig {
                         
                         .anyRequest().authenticated())
                     .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-                    
+
         return http.build();
     }
 }
