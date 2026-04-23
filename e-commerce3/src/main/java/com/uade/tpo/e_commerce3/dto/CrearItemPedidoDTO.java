@@ -8,11 +8,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CrearItemPedidoDTO {
-    private String nombreProducto;
+    private Long productoId;
     private Integer cantidad;
-    private Double precioUnitario;
 
     // PARA AGREGAR:
-    // reemplazar nombreProducto por productoId
-    // o agregar productoId manteniendo nombreProducto solo para respuesta.
+    // Por ahora no recibimos precioUnitario desde el request.
+    // Se tomará desde Producto al crear el pedido.
 }

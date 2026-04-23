@@ -17,7 +17,9 @@ public class ItemPedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nombreProducto;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "producto_id", nullable = false)
+    private Producto producto;
 
     private Integer cantidad;
 
@@ -40,11 +42,6 @@ public class ItemPedido {
     }
 
     // PARA AGREGAR:
-    // Cuando esté lista la entidad Producto, evaluar reemplazar nombreProducto por:
-    //
-    // @ManyToOne
-    // @JoinColumn(name = "producto_id", nullable = false)
-    // private Producto producto;
-    //
-    // Y mantener igualmente precioUnitario para congelar el valor al momento de la compra.
+    // Más adelante, cuando esté carrito, este item se debería generar
+    // a partir de los productos del checkout y validar stock.
 }

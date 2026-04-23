@@ -9,12 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ItemPedidoResponseDTO {
     private Long id;
+    private Long productoId;
     private String nombreProducto;
     private Integer cantidad;
     private Double precioUnitario;
     private Double subtotal;
-
-    // PARA AGREGAR:
-    // Cuando exista la entidad Producto integrada al pedido,
-    // evaluar agregar productoId en la respuesta.
 }

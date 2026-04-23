@@ -11,43 +11,48 @@ import com.uade.tpo.e_commerce3.repository.ItemPedidoRepository;
 import com.uade.tpo.e_commerce3.repository.PedidoRepository;
 import com.uade.tpo.e_commerce3.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
+import com.uade.tpo.e_commerce3.model.Producto;
+import com.uade.tpo.e_commerce3.repository.ProductoRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
 @Service
 public class PedidoService {
-    private final PedidoRepository pedidoRepository;
-    private final ItemPedidoRepository itemPedidoRepository;
-    private final UsuarioRepository usuarioRepository;
+        private final PedidoRepository pedidoRepository;
+        private final ItemPedidoRepository itemPedidoRepository;
+        private final UsuarioRepository usuarioRepository;
+        private final ProductoRepository productoRepository;
 
-    public PedidoService(PedidoRepository pedidoRepository,
+        public PedidoService(PedidoRepository pedidoRepository,
                         ItemPedidoRepository itemPedidoRepository,
-                        UsuarioRepository usuarioRepository) {
+                        UsuarioRepository usuarioRepository,
+                        ProductoRepository productoRepository) {
         this.pedidoRepository = pedidoRepository;
         this.itemPedidoRepository = itemPedidoRepository;
         this.usuarioRepository = usuarioRepository;
-    }
+        this.productoRepository = productoRepository;
+        }
 
-    public List<PedidoResponseDTO> obtenerTodos() {
-        return pedidoRepository.findAll()
-                .stream()
-                .map(this::convertirAPedidoResponseDTO)
-                .collect(Collectors.toList());
-    }
+        public List<PedidoResponseDTO> obtenerTodos() {
+                return pedidoRepository.findAll()
+                        .stream()
+                        .map(this::convertirAPedidoResponseDTO)
+                        .collect(Collectors.toList());
+        }
 
-    public PedidoResponseDTO obtenerPorId(Long id) {
-        Pedido pedido = pedidoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pedido no encontrado con id: " + id));
+        public PedidoResponseDTO obtenerPorId(Long id) {
+                Pedido pedido = pedidoRepository.findById(id)
+                        .orElseThrow(() -> new RuntimeException("Pedido no encontrado con id: " + id));
 
-        return convertirAPedidoResponseDTO(pedido);
-    }
+                return convertirAPedidoResponseDTO(pedido);
+        }
 
-    public PedidoResponseDTO crearPedido(CrearPedidoRequestDTO requestDTO) {
-        // IMPLEMENTACIÓN PROVISORIA
-        // Este método crea pedidos sin validar stock ni integrar Producto/Carrito.
-        // Se utiliza únicamente para pruebas.
+        public PedidoResponseDTO crearPedido(CrearPedidoRequestDTO requestDTO) {
+                // IMPLEMENTACIÓN PROVISORIA
+                // Este método crea pedidos usando Producto, pero todavía no integra carrito
+                // ni validación completa de stock. Se usa para pruebas hasta que el checkout esté listo.
 
-        Usuario usuario = usuarioRepository.findById(requestDTO.getUsuarioId())
+                Usuario usuario = usuarioRepository.findById(requestDTO.getUsuarioId())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         Pedido pedido = Pedido.builder()
@@ -56,14 +61,21 @@ public class PedidoService {
                 .total(0.0)
                 .build();
 
-        List<ItemPedido> items = requestDTO.getItems().stream().map(itemDTO ->
-                ItemPedido.builder()
-                        .nombreProducto(itemDTO.getNombreProducto())
+        List<ItemPedido> items = requestDTO.getItems().stream().map(itemDTO -> {
+
+                Producto producto = productoRepository.findById(itemDTO.getProductoId())
+                        .orElseThrow(() -> new RuntimeException("Producto no encontrado con id: " + itemDTO.getProductoId()));
+
+                ItemPedido item = ItemPedido.builder()
+                        .producto(producto)
                         .cantidad(itemDTO.getCantidad())
-                        .precioUnitario(itemDTO.getPrecioUnitario())
+                        .precioUnitario(producto.getPrecio())
                         .pedido(pedido)
-                        .build()
-        ).collect(Collectors.toList());
+                        .build();
+
+                return item;
+
+        }).collect(Collectors.toList());
 
         double total = items.stream()
                 .mapToDouble(item -> item.getCantidad() * item.getPrecioUnitario())
@@ -73,11 +85,11 @@ public class PedidoService {
         pedido.setTotal(total);
 
         Pedido pedidoGuardado = pedidoRepository.save(pedido);
-        
-        return convertirAPedidoResponseDTO(pedidoGuardado);
-    }
 
-    public PedidoResponseDTO cancelarPedido(Long id) {
+        return convertirAPedidoResponseDTO(pedidoGuardado);
+        }
+
+        public PedidoResponseDTO cancelarPedido(Long id) {
         // IMPLEMENTACIÓN PROVISORIA
         // No valida estados previos ni reglas de negocio
 
@@ -89,14 +101,15 @@ public class PedidoService {
         Pedido pedidoActualizado = pedidoRepository.save(pedido);
 
         return convertirAPedidoResponseDTO(pedidoActualizado);
-    }
+        }
 
-    private PedidoResponseDTO convertirAPedidoResponseDTO(Pedido pedido) {
-        List<ItemPedidoResponseDTO> itemsDTO = pedido.getItems()
+        private PedidoResponseDTO convertirAPedidoResponseDTO(Pedido pedido) {
+                List<ItemPedidoResponseDTO> itemsDTO = pedido.getItems()
                 .stream()
                 .map(item -> new ItemPedidoResponseDTO(
                         item.getId(),
-                        item.getNombreProducto(),
+                        item.getProducto().getIdProducto(),
+                        item.getProducto().getNombre(),
                         item.getCantidad(),
                         item.getPrecioUnitario(),
                         item.getSubtotal()
@@ -111,7 +124,7 @@ public class PedidoService {
                 pedido.getUsuario().getId(),
                 itemsDTO
         );
-    }
+        }
 
     // PARA AGREGAR:
     // Más adelante crear métodos auxiliares privados para:
