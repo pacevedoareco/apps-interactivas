@@ -90,11 +90,11 @@ public class ProductoService {
     }
 
     public ProductoResponseDTO getProductoById(Long id) {
-    Producto producto = productoRepository.findById(id)
-            .orElseThrow(() -> new ProductoNotFoundException(id));
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new ProductoNotFoundException(id));
 
-    return mapToResponse(producto);
-}
+        return mapToResponse(producto);
+    }
 
     private ProductoResponseDTO mapToResponse(Producto producto) {
         return ProductoResponseDTO.builder()
@@ -116,6 +116,4 @@ public class ProductoService {
                 )
                 .build();
     }
-
-    
 }
