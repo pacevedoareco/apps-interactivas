@@ -9,7 +9,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -18,8 +17,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-//import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Builder;
@@ -54,25 +51,35 @@ public class Usuario implements UserDetails{
     private Date fechaNacimiento;
 
     //Relaciones:
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "direccion_id")
+    @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY)
     private Direccion direccion;
-
-    //@OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
-    //private List<Producto> productosPublicados = new ArrayList<>(); //(OneToMany)
-
-    /*  En Producto tendré:
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "producto_id")
+    /*  En Direccion tendré:
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "usuario_id")
     private Usuario usuario;
     */
 
     //@OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
-    //private List<Pedido> pedidos = new ArrayList<>(); //  (OneToMany) 
+    //private List<Producto> productosPublicados = new ArrayList<>(); 
+    /*  En Producto tendré:
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
+    */
 
+    //@OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY)
+    //private Carrito carrito;
+    /*  En Carrito tendré:
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
+    */
+
+    //@OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
+    //private List<Pedido> pedidos = new ArrayList<>(); 
     /*  En Pedido tendré:
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pedido_id")
+    @JoinColumn(name = "usuario_id")
     private Usuario usuario;
     */
 
