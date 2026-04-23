@@ -1,9 +1,11 @@
 package com.uade.tpo.e_commerce3.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Builder;
@@ -27,7 +29,8 @@ public class Direccion {
     private String codigoPostal;
     private String pais;
     
-    @OneToOne(mappedBy = "direccion")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
 }
