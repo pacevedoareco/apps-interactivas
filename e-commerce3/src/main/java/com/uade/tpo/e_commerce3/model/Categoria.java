@@ -11,13 +11,23 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "categorias")
-@Data
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(exclude = "productos")
+@ToString(exclude = "productos")
 public class Categoria {
 
     @Id

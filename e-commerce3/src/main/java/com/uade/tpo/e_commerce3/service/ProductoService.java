@@ -12,6 +12,8 @@ import com.uade.tpo.e_commerce3.dto.ProductoResponseDTO;
 import com.uade.tpo.e_commerce3.exception.ProductoNotFoundException;
 import com.uade.tpo.e_commerce3.exception.ResourceNotFoundException;
 import com.uade.tpo.e_commerce3.model.Categoria;
+import com.uade.tpo.e_commerce3.model.CondicionPublicacion;
+import com.uade.tpo.e_commerce3.model.EstadoProducto;
 import com.uade.tpo.e_commerce3.model.Producto;
 import com.uade.tpo.e_commerce3.model.Usuario;
 import com.uade.tpo.e_commerce3.repository.CategoriaRepository;
@@ -48,7 +50,30 @@ public class ProductoService {
         producto.setPrecio(dto.getPrecio());
         producto.setStock(dto.getStock());
         producto.setMarca(dto.getMarca());
+
+        /*
+         * fechaPublicacion se genera automáticamente al crear el producto.
+         */
         producto.setFechaPublicacion(LocalDate.now());
+
+        /*
+         * Si no se informa estadoProducto, se asigna NUEVO por defecto.
+         */
+        producto.setEstadoProducto(
+                dto.getEstadoProducto() != null && !dto.getEstadoProducto().isBlank()
+                        ? EstadoProducto.valueOf(dto.getEstadoProducto())
+                        : EstadoProducto.NUEVO
+        );
+
+        /*
+         * Si no se informa condicionPublicacion, se asigna ACTIVA por defecto.
+         */
+        producto.setCondicionPublicacion(
+                dto.getCondicionPublicacion() != null && !dto.getCondicionPublicacion().isBlank()
+                        ? CondicionPublicacion.valueOf(dto.getCondicionPublicacion())
+                        : CondicionPublicacion.ACTIVA
+        );
+
         producto.setVendedor(vendedor);
         producto.setCategorias(categorias);
 
@@ -65,11 +90,11 @@ public class ProductoService {
     }
 
     public ProductoResponseDTO getProductoById(Long id) {
-        Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new ProductoNotFoundException(id));
+    Producto producto = productoRepository.findById(id)
+            .orElseThrow(() -> new ProductoNotFoundException(id));
 
-        return mapToResponse(producto);
-    }
+    return mapToResponse(producto);
+}
 
     private ProductoResponseDTO mapToResponse(Producto producto) {
         return ProductoResponseDTO.builder()
@@ -79,6 +104,8 @@ public class ProductoService {
                 .precio(producto.getPrecio())
                 .stock(producto.getStock())
                 .marca(producto.getMarca())
+                .estadoProducto(producto.getEstadoProducto() != null ? producto.getEstadoProducto().name() : null)
+                .condicionPublicacion(producto.getCondicionPublicacion() != null ? producto.getCondicionPublicacion().name() : null)
                 .fechaPublicacion(producto.getFechaPublicacion())
                 .vendedorId(producto.getVendedor().getId())
                 .categorias(
@@ -89,4 +116,6 @@ public class ProductoService {
                 )
                 .build();
     }
+
+    
 }
