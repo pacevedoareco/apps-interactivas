@@ -4,9 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.CollectionTable;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -14,13 +13,17 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "carritos")
@@ -28,6 +31,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EqualsAndHashCode(exclude = { "usuario", "items" })
+@ToString(exclude = { "usuario", "items" })
 public class Carrito {
 
 	@Id
@@ -47,8 +52,11 @@ public class Carrito {
 	@Column(nullable = false)
 	private Double total;
 
-	@ElementCollection
-	@CollectionTable(name = "carrito_items", joinColumns = @JoinColumn(name = "carrito_id"))
+	@OneToOne
+	@JoinColumn(name = "usuario_id", nullable = false, unique = true)
+	private Usuario usuario;
+
+	@OneToMany(mappedBy = "carrito", cascade = CascadeType.ALL, orphanRemoval = true)
 	@Builder.Default
 	private List<CarritoItem> items = new ArrayList<>();
 
@@ -73,7 +81,14 @@ public class Carrito {
 
 	public void recalcularTotal() {
 		this.total = items.stream()
-				.mapToDouble(CarritoItem::calcularSubtotal)
+				.mapToDouble(item -> {
+					item.calcularSubtotal();
+					Double subtotal = item.getSubtotal();
+					if (subtotal == null) {
+						return 0.0;
+					}
+					return subtotal;
+				})
 				.sum();
 	}
 }
