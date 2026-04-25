@@ -72,6 +72,16 @@ public class SecurityConfig {
                         // Admin - solo rol ADMIN
                         .requestMatchers("/api/admin/**").hasRole(Role.ADMIN.name())
                         
+                        // swagger
+                        .requestMatchers(
+                            "/swagger-ui/**",
+                            "/swagger-ui.html",
+                            "/v3/api-docs/**",
+                            "/v3/api-docs.yaml",
+                            "/swagger-resources/**",
+                            "/webjars/**"
+                        ).permitAll()
+
                         .anyRequest().authenticated())
                     .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

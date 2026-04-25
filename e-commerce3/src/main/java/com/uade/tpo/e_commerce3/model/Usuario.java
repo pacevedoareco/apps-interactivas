@@ -1,7 +1,6 @@
 package com.uade.tpo.e_commerce3.model;
 
 import java.sql.Date;
-//import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -9,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -19,13 +19,17 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
 @Table(name = "usuarios")
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Usuario implements UserDetails{
 
     @Id
@@ -51,7 +55,7 @@ public class Usuario implements UserDetails{
     private Date fechaNacimiento;
 
     //Relaciones:
-    @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Direccion direccion;
     /*  En Direccion tendré:
     @OneToOne(cascade = CascadeType.ALL)

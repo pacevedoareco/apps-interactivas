@@ -40,6 +40,12 @@ private final JwtUtil jwtUtil;
             throw new EmailAlreadyExistsException(request.getEmail());
         }
 
+        // Crear la dirección si existe
+        Direccion direccion = null;
+        if (request.getDireccion() != null) {
+            direccion = mapToDireccion(request.getDireccion());
+        }
+
         Usuario usuario = Usuario.builder()
                 .nombre(request.getNombre())
                 .apellido(request.getApellido())
@@ -49,8 +55,13 @@ private final JwtUtil jwtUtil;
                 .activo(true)
                 .telefono(request.getTelefono())
                 .fechaNacimiento(request.getFechaNacimiento())
-                .direccion(mapToDireccion(request.getDireccion()))
+                .direccion(direccion)
                 .build();
+
+        // Si hay dirección, establecer la relación bidireccional
+        if (direccion != null) {
+            direccion.setUsuario(usuario);
+        }
 
         usuarioRepository.save(usuario);
     }

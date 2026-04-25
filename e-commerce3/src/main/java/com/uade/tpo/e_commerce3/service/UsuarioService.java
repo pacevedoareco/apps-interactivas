@@ -3,14 +3,17 @@ package com.uade.tpo.e_commerce3.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.uade.tpo.e_commerce3.dto.DireccionDTO;
+import com.uade.tpo.e_commerce3.dto.UsuarioCreateDTO;
 import com.uade.tpo.e_commerce3.dto.UsuarioResponseDTO;
 import com.uade.tpo.e_commerce3.dto.UsuarioUpdateDTO;
+import com.uade.tpo.e_commerce3.exception.EmailAlreadyExistsException;
 import com.uade.tpo.e_commerce3.exception.UsuarioNotFoundException;
 import com.uade.tpo.e_commerce3.model.Direccion;
-//import com.uade.tpo.e_commerce3.model.Producto;
+import com.uade.tpo.e_commerce3.model.Role;
 import com.uade.tpo.e_commerce3.model.Usuario;
 import com.uade.tpo.e_commerce3.repository.UsuarioRepository;
 
@@ -24,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
     // ==================== PERFIL ====================
 
@@ -97,6 +101,51 @@ public class UsuarioService {
 
     // ==================== ADMIN ====================
 
+    //Lógica para: POST /api/admin/usuarios
+    public UsuarioResponseDTO createUsuario(UsuarioCreateDTO request) {
+        // Validar que el email no exista
+        if (usuarioRepository.existsByEmail(request.getEmail())) {
+            throw new EmailAlreadyExistsException(request.getEmail());
+        }
+
+        // Determinar el rol (por defecto USER si no se especifica)
+        Role role = Role.USER;
+        if (request.getRole() != null && !request.getRole().isEmpty()) {
+            try {
+                role = Role.valueOf(request.getRole().toUpperCase());
+            } catch (IllegalArgumentException e) {
+                role = Role.USER; // Si el rol no es válido, usar USER por defecto
+            }
+        }
+
+        // Crear la dirección si existe
+        Direccion direccion = null;
+        if (request.getDireccion() != null) {
+            direccion = mapToDireccion(request.getDireccion());
+        }
+
+        // Crear el usuario
+        Usuario usuario = Usuario.builder()
+                .nombre(request.getNombre())
+                .apellido(request.getApellido())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .role(role)
+                .activo(true)
+                .telefono(request.getTelefono())
+                .fechaNacimiento(request.getFechaNacimiento())
+                .direccion(direccion)
+                .build();
+
+        // Si hay dirección, establecer la relación bidireccional
+        if (direccion != null) {
+            direccion.setUsuario(usuario);
+        }
+
+        usuarioRepository.save(usuario);
+        return mapToUsuarioResponseDTO(usuario);
+    }
+
     //Lógica para: GET /api/admin/usuarios
     public List<UsuarioResponseDTO> getAllUsuariosAdmin() {
         return usuarioRepository.findAll()
@@ -129,6 +178,21 @@ public class UsuarioService {
     }
 
     // ==================== MAPPERS ====================
+    
+    private Direccion mapToDireccion(DireccionDTO dto) {
+        if (dto == null) return null;
+        return Direccion.builder()
+                .calle(dto.getCalle())
+                .numero(dto.getNumero())
+                .piso(dto.getPiso())
+                .departamento(dto.getDepartamento())
+                .ciudad(dto.getCiudad())
+                .provincia(dto.getProvincia())
+                .codigoPostal(dto.getCodigoPostal())
+                .pais(dto.getPais())
+                .build();
+    }
+
     private UsuarioResponseDTO mapToUsuarioResponseDTO(Usuario usuario) {
         DireccionDTO direccionDTO = null;
         if (usuario.getDireccion() != null) {
