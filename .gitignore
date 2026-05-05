@@ -2,6 +2,7 @@
 .DS_Store
 .localized
 __MACOSX/
+.vscode/
 
 # Compiled class file
 *.class
