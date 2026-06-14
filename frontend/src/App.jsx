@@ -12,6 +12,8 @@ import MisPedidosPage from "./pages/MisPedidosPage";
 import MisProductosPage from "./pages/MisProductosPage";
 import PerfilPage from "./pages/PerfilPage";
 import AdminPage from "./pages/AdminPage";
+import MiProductoGestionPage from "./pages/MiProductoGestionPage";
+
 
 function App() {
   return (
@@ -28,6 +30,8 @@ function App() {
           <Route path="/mis-productos" element={<MisProductosPage />} />
           <Route path="/perfil" element={<PerfilPage />} />
           <Route path="/admin" element={<AdminPage />} />
+          <Route path="/mis-productos/nuevo" element={<MiProductoGestionPage />} />
+          <Route path="/mis-productos/:id" element={<MiProductoGestionPage />} /> 
         </Routes>
       </BrowserRouter>
     </AuthProvider>

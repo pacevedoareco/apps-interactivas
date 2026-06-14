@@ -1,0 +1,62 @@
+.popup-confirmacion__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.popup-confirmacion {
+  background: var(--color-form-bg);
+  border-radius: 2px;
+  padding: var(--espaciado-lg);
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaciado-md);
+}
+
+.popup-confirmacion__mensaje {
+  color: var(--color-negro);
+  font-size: var(--font-size-texto);
+  margin: 0;
+  text-align: center;
+}
+
+.popup-confirmacion__acciones {
+  display: flex;
+  gap: var(--espaciado-md);
+}
+
+.popup-confirmacion__btn {
+  flex: 1;
+  padding: 10px;
+  font-size: var(--font-size-detalle);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-radius: 1px;
+  border: 1px solid var(--color-borde);
+  transition: background 0.2s ease;
+}
+
+.popup-confirmacion__btn--secundario {
+  background: transparent;
+  color: var(--color-negro);
+}
+
+.popup-confirmacion__btn--secundario:hover {
+  background: var(--color-borde);
+}
+
+.popup-confirmacion__btn--peligro {
+  background: var(--color-error);
+  color: var(--color-blanco);
+  border-color: var(--color-error);
+}
+
+.popup-confirmacion__btn--peligro:hover {
+  background: #8e3a3a;
+}

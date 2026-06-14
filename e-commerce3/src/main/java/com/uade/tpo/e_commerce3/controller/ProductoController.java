@@ -42,6 +42,16 @@ public class ProductoController {
     }
 
     /*
+    * Endpoint: GET /api/productos/mis-productos
+    * Descripción: Obtiene los productos publicados por el vendedor autenticado.
+    * Retorna una lista de ProductoResponseDTO.
+    */
+    @GetMapping("/mis-productos")
+    public ResponseEntity<List<ProductoResponseDTO>> getMisProductos() {
+        return ResponseEntity.ok(productoService.getMisProductos());
+    }
+
+    /*
      * Endpoint: GET /api/productos/{id}
      * Descripción: Obtiene el detalle de un producto específico por ID.
      * Retorna un ProductoResponseDTO.

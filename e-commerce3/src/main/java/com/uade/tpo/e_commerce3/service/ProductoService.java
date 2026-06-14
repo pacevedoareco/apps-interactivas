@@ -5,13 +5,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.Authentication;
 
 import com.uade.tpo.e_commerce3.dto.ProductoRequestDTO;
 import com.uade.tpo.e_commerce3.dto.ProductoResponseDTO;
 import com.uade.tpo.e_commerce3.exception.PrecioNegativoException;
 import com.uade.tpo.e_commerce3.exception.ProductoNotFoundException;
 import com.uade.tpo.e_commerce3.exception.ResourceNotFoundException;
+import com.uade.tpo.e_commerce3.exception.UsuarioNotFoundException;
 import com.uade.tpo.e_commerce3.model.Categoria;
 import com.uade.tpo.e_commerce3.model.CondicionPublicacion;
 import com.uade.tpo.e_commerce3.model.EstadoProducto;
@@ -42,7 +45,7 @@ public class ProductoService {
     public ProductoResponseDTO crearProducto(ProductoRequestDTO request) {
         validarProducto(request);
 
-        Usuario vendedor = obtenerVendedor(request.getVendedorId());
+        Usuario vendedor = obtenerUsuarioAutenticado();
         Set<Categoria> categorias = obtenerCategorias(request.getCategoriasIds());
 
         Producto producto = new Producto();
@@ -63,13 +66,27 @@ public class ProductoService {
     }
 
     /*
-     * Lógica para: GET /api/productos
-     * Devuelve el listado completo de productos.
-     * Se usa ProductoResponseDTO para no exponer directamente la entidad.
-     */
+    * Lógica para: GET /api/productos
+    * Devuelve el listado de productos activos (excluye pausados y eliminados).
+    * Se usa ProductoResponseDTO para no exponer directamente la entidad.
+    */
     public List<ProductoResponseDTO> getAllProductos() {
-        return productoRepository.findAll()
+        return productoRepository.findByCondicionPublicacion(CondicionPublicacion.ACTIVA)
                 .stream()
+                .map(this::mapToProductoResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    /*
+    * Lógica para: GET /api/productos/mis-productos
+    * Devuelve los productos publicados por el vendedor autenticado,
+    * excluyendo los eliminados (sí incluye pausados, para que pueda reactivarlos).
+    */
+    public List<ProductoResponseDTO> getMisProductos() {
+        Usuario vendedor = obtenerUsuarioAutenticado();
+        return productoRepository.findByVendedorId(vendedor.getId())
+                .stream()
+                .filter(producto -> producto.getCondicionPublicacion() != CondicionPublicacion.ELIMINADA)
                 .map(this::mapToProductoResponseDTO)
                 .collect(Collectors.toList());
     }
@@ -97,7 +114,11 @@ public class ProductoService {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new ProductoNotFoundException(id));
 
-        Usuario vendedor = obtenerVendedor(request.getVendedorId());
+        Usuario usuarioActual = obtenerUsuarioAutenticado();
+        if (!producto.getVendedor().getId().equals(usuarioActual.getId())) {
+            throw new IllegalArgumentException("No tenés permiso para editar este producto");
+        }
+
         Set<Categoria> categorias = obtenerCategorias(request.getCategoriasIds());
 
         producto.setNombre(request.getNombre());
@@ -107,7 +128,6 @@ public class ProductoService {
         producto.setMarca(request.getMarca());
         producto.setEstadoProducto(obtenerEstadoProducto(request.getEstadoProducto()));
         producto.setCondicionPublicacion(obtenerCondicionPublicacion(request.getCondicionPublicacion()));
-        producto.setVendedor(vendedor);
         producto.setCategorias(categorias);
 
         Producto actualizado = productoRepository.save(producto);
@@ -124,6 +144,11 @@ public class ProductoService {
     public void deleteProducto(Long id) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new ProductoNotFoundException(id));
+
+        Usuario usuarioActual = obtenerUsuarioAutenticado();
+        if (!producto.getVendedor().getId().equals(usuarioActual.getId())) {
+            throw new IllegalArgumentException("No tenés permiso para eliminar este producto");
+        }
 
         producto.setCondicionPublicacion(CondicionPublicacion.ELIMINADA);
         productoRepository.save(producto);
@@ -145,22 +170,9 @@ public class ProductoService {
             throw new IllegalArgumentException("El stock no puede ser negativo");
         }
 
-        if (request.getVendedorId() == null) {
-            throw new IllegalArgumentException("El producto debe tener un vendedor");
-        }
-
         if (request.getCategoriasIds() == null || request.getCategoriasIds().isEmpty()) {
             throw new IllegalArgumentException("El producto debe tener al menos una categoría");
         }
-    }
-
-    /*
-     * Busca el usuario vendedor asociado al producto.
-     * Si no existe, devuelve error 404 mediante ResourceNotFoundException.
-     */
-    private Usuario obtenerVendedor(Long vendedorId) {
-        return usuarioRepository.findById(vendedorId)
-                .orElseThrow(() -> new ResourceNotFoundException("Vendedor no encontrado con id: " + vendedorId));
     }
 
     /*
@@ -220,5 +232,15 @@ public class ProductoService {
                                 .collect(Collectors.toList())
                 )
                 .build();
+    }
+    private Usuario obtenerUsuarioAutenticado() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getName() == null) {
+            throw new IllegalArgumentException("No hay usuario autenticado");
+        }
+
+        String email = authentication.getName();
+        return usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new UsuarioNotFoundException(email));
     }
 }

@@ -58,7 +58,8 @@ public class SecurityConfig {
                         // Públicos - Register/Login
                         .requestMatchers("/api/auth/**").permitAll()
                         
-                        // Productos - GET Público, resto authenticated
+                        // Productos - mis-productos requiere autenticación, ver el listado y el detalle son públicos, crear/editar/eliminar requieren autenticación
+                        .requestMatchers(HttpMethod.GET, "/api/productos/mis-productos").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/productos").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/productos/**").authenticated()
@@ -68,6 +69,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/usuarios/me").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/usuarios/**").permitAll()
                         
+                        // Categorías - GET público para clasificar y filtrar productos
+                        .requestMatchers(HttpMethod.GET, "/api/categorias/**").permitAll()
+
                          // Carrito
                         .requestMatchers("/api/carrito/**").authenticated()
 
