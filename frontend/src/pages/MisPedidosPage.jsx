@@ -1,5 +1,4 @@
 import "../styles/MiCuentaPages.css";
-import "../styles/PerfilPage.css";
 
 function MisPedidosPage() {
   return (

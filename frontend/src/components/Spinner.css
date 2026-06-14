@@ -1,0 +1,30 @@
+.spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espaciado-md);
+  padding: var(--espaciado-xl);
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--color-borde);
+  border-top-color: var(--color-verde-claro);
+  border-radius: 50%;
+  animation: spinner-rotar 0.8s linear infinite;
+}
+
+.spinner__texto {
+  font-family: var(--font-display);
+  font-size: var(--font-size-texto);
+  color: var(--color-blanco);
+  letter-spacing: 0.05em;
+}
+
+@keyframes spinner-rotar {
+  to {
+    transform: rotate(360deg);
+  }
+}

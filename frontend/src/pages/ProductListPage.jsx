@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ProductCard from "../components/ProductCard";
+import Spinner from "../components/Spinner";
 import "../styles/ProductListPage.css";
 
 function ProductListPage() {
@@ -29,7 +30,7 @@ function ProductListPage() {
   }, []);
 
   if (loading) {
-    return <h2>Cargando productos...</h2>;
+    return <Spinner texto="Cargando perfil..." />;
   }
 
   if (error) {

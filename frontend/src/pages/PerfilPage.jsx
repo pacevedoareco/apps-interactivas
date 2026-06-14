@@ -3,6 +3,7 @@ import { obtenerUsuarioActual, actualizarUsuarioActual } from "../services/usuar
 import DatosPersonalesForm from "../components/DatosPersonalesForm";
 import DireccionForm from "../components/DireccionForm";
 import PerfilCard from "../components/PerfilCard";
+import Spinner from "../components/Spinner";
 import "../styles/MiCuentaPages.css";
 
 // Campos obligatorios de cada sección, usados para validar antes de guardar
@@ -115,7 +116,7 @@ function PerfilPage() {
   };
 
   if (!formData) {
-    return <h2>Cargando perfil...</h2>;
+    return <Spinner texto="Cargando perfil..." />;
   }
 
   return (
