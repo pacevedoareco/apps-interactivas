@@ -64,9 +64,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/productos/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/productos/**").authenticated()
                         
-                        // Usuarios - GET público para ver perfil de vendedor, resto autenticado
+                        // Usuarios - /me requiere autenticación, el resto de GET es público para ver perfil de vendedor
+                        .requestMatchers("/api/usuarios/me").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/usuarios/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/api/usuarios/**").authenticated()
                         
                          // Carrito
                         .requestMatchers("/api/carrito/**").authenticated()

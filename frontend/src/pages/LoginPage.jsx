@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { loginUsuario } from "../services/authService";
+import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import FormInput from "../components/FormInput";
 import "../styles/AuthPages.css";
 
@@ -21,6 +23,9 @@ function LoginPage() {
   const [formData, setFormData] = useState(valoresIniciales);
   const [errors, setErrors] = useState({});
   const [errorBackend, setErrorBackend] = useState("");
+
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   // Actualiza el formulario a medida que el usuario escribe
   const handleChange = (e) => {
@@ -61,8 +66,8 @@ function LoginPage() {
     // POST al backend
     try {
       const token = await loginUsuario(formData);
-      localStorage.setItem("token", token);
-      window.location.href = "/";
+      login(token);
+      navigate("/");
     } catch (error) {
       setErrorBackend(error.message);
     }

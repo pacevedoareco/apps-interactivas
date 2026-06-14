@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { registrarUsuario } from "../services/authService";
+import { useNavigate } from "react-router-dom";
 import FormInput from "../components/FormInput";
 import DatosPersonalesForm from "../components/DatosPersonalesForm";
+import DireccionForm from "../components/DireccionForm";
 import "../styles/AuthPages.css";
 
 // Campos de email/contraseña, para generar los FormInput con .map()
@@ -37,6 +39,8 @@ function RegisterPage() {
   const [formData, setFormData] = useState(valoresIniciales);
   const [errors, setErrors] = useState({});
   const [errorBackend, setErrorBackend] = useState("");
+
+  const navigate = useNavigate();
 
   // Actualiza el formulario a medida que el usuario escribe
   const handleChange = (e) => {
@@ -117,7 +121,7 @@ function RegisterPage() {
     // POST al backend
     try {
       await registrarUsuario(registerRequest);
-      window.location.href = "/login";
+      navigate("/login");
     } catch (error) {
       setErrorBackend(error.message);
     }
@@ -129,7 +133,11 @@ function RegisterPage() {
       <form className="auth__form" onSubmit={handleSubmit}>
         <h1 className="auth__titulo">Crear Cuenta</h1>
 
+        <h2 className="auth__subtitulo">Datos Personales</h2>
         <DatosPersonalesForm formData={formData} errors={errors} onChange={handleChange} />
+
+        <h2 className="auth__subtitulo">Dirección</h2>
+        <DireccionForm formData={formData} errors={errors} onChange={handleChange} />
 
         <h2 className="auth__subtitulo">Cuenta</h2>
 

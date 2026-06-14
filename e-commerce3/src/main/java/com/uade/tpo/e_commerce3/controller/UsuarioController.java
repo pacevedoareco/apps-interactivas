@@ -28,16 +28,25 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
 
     // ==================== PERFIL ====================
+    @GetMapping("/usuarios/me")
+    public ResponseEntity<UsuarioResponseDTO> getUsuarioAutenticado() {
+        return ResponseEntity.ok(usuarioService.getUsuarioAutenticado());
+    }
+
+    @PutMapping("/usuarios/me")
+    public ResponseEntity<UsuarioResponseDTO> updateUsuarioAutenticado(@RequestBody UsuarioUpdateDTO request) {
+        return ResponseEntity.ok(usuarioService.updateUsuarioAutenticado(request));
+    }
 
     @GetMapping("/usuarios/{id}")
     public ResponseEntity<UsuarioResponseDTO> getUsuarioById(@PathVariable Long id) {
         return ResponseEntity.ok(usuarioService.getUsuarioById(id));
     }
 
-    @PutMapping("/usuarios/{id}")
-    public ResponseEntity<UsuarioResponseDTO> updateUsuario(@PathVariable Long id, @RequestBody UsuarioUpdateDTO request) {
-        return ResponseEntity.ok(usuarioService.updateUsuario(id, request));
-    }
+    // @PutMapping("/usuarios/{id}")
+    // public ResponseEntity<UsuarioResponseDTO> updateUsuario(@PathVariable Long id, @RequestBody UsuarioUpdateDTO request) {
+    //     return ResponseEntity.ok(usuarioService.updateUsuario(id, request));
+    // }
 
     @PutMapping("/usuarios/{id}/desactivar")
     public ResponseEntity<String> desactivarUsuario(@PathVariable Long id) {
