@@ -38,7 +38,7 @@ function ProductListPage() {
 
   return (
     <div className="product-list">
-      <h1 className="product-list__titulo">Listado de Productos</h1>
+      <h1 className="product-list__titulo">Colección Exclusiva</h1>
 
       {productos.length === 0 ? (
         <p>No hay productos disponibles.</p>

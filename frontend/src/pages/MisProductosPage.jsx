@@ -1,9 +1,12 @@
-//import "../styles/MisProductosPage.css";
+import "../styles/MiCuentaPages.css";
 
 function MisProductosPage() {
   return (
-    <div className="page">
-      <h1 className="page__titulo">Mis Productos</h1>
+    <div className="mi-cuenta">
+      <div className="titulo-pagina">
+        <span className="titulo-pagina__eyebrow">Área Personal</span>
+        <h1 className="titulo-pagina__texto">Mis Productos</h1>
+      </div>
     </div>
   );
 }

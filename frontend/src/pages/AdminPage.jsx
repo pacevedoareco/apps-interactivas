@@ -1,9 +1,12 @@
-//import "../styles/AdminPage.css";
+import "../styles/MiCuentaPages.css";
 
 function AdminPage() {
   return (
-    <div className="page">
-      <h1 className="page__titulo">Panel Admin</h1>
+    <div className="mi-cuenta">
+      <div className="titulo-pagina">
+        <span className="titulo-pagina__eyebrow">Área Personal</span>
+        <h1 className="titulo-pagina__texto">Acceso Administrador</h1>
+      </div>
     </div>
   );
 }
