@@ -1,0 +1,32 @@
+.form-input {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-input__label {
+  font-size: var(--font-size-detalle);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-gris);
+}
+
+.form-input__input {
+  font-family: var(--font-body);
+  font-size: var(--font-size-texto);
+  color: var(--color-negro);
+  border: 1px solid var(--color-borde);
+  border-radius: 1px;
+  padding: 10px 12px;
+}
+
+.form-input__input:focus {
+  outline: none;
+  border-color: var(--color-verde-claro);
+}
+
+.form-input__error {
+  color: var(--color-error);
+  font-size: 12px;
+}

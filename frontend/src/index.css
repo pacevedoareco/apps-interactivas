@@ -7,6 +7,10 @@
   --color-gris: #8a9290;
   --color-borde: #e8e0d5;
   --color-error: #b04a4a;
+  --color-gris-oscuro: #2a2e30;
+  /* --color-fondo: #23282a; */
+  --color-fondo: #121f21;
+  --color-form-bg: #ffffff;
 
   /* Tipografía */
   --font-display: Georgia, 'Times New Roman', serif;
@@ -34,7 +38,7 @@ body {
   margin: 0;
   font-family: var(--font-body);
   color: var(--color-negro);
-  background: var(--color-blanco);
+  background: var(--color-fondo);
 }
 
 a {
