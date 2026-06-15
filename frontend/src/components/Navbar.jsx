@@ -5,7 +5,7 @@ import "./Navbar.css";
 
 function Navbar() {
   const [cuentaAbierta, setCuentaAbierta] = useState(false);
-  const { token, logout } = useContext(AuthContext);
+  const { token, isAdmin, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
   const publishTarget = token
@@ -59,7 +59,7 @@ function Navbar() {
                 <Link to="/mis-productos" className="navbar__dropdown-item">Mis Productos</Link>
                 <Link to="/mis-pedidos" className="navbar__dropdown-item">Mis Pedidos</Link>
                 <Link to="/perfil" className="navbar__dropdown-item">Mi Perfil</Link>
-                <Link to="/admin" className="navbar__dropdown-item">Admin</Link>
+                {isAdmin && <Link to="/admin" className="navbar__dropdown-item">Admin</Link>}
               </div>
             )}
           </div>

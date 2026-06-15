@@ -6,12 +6,15 @@ function ProductCard({ producto }) {
   const estadoLabel = {
     NUEVO: "Nuevo",
     USADO: "Usado",
-    EDICION_LIMITADA: "Edición Limitada",
+    EDICION_LIMITADA: "Edicion limitada",
   };
 
   return (
-    <div className="product-card">
-
+    <Link
+      to={`/productos/${producto.idProducto}`}
+      className="product-card"
+      aria-label={`Ver detalle de ${producto.nombre}`}
+    >
       <div className="product-card__imagen">
         <img
           src={producto.imagenUrl || productPlaceholder}
@@ -44,10 +47,10 @@ function ProductCard({ producto }) {
         )}
       </div>
 
-      <Link to={`/productos/${producto.idProducto}`} className="product-card__link">
+      <span className="product-card__link">
         Ver detalle
-      </Link>
-    </div>
+      </span>
+    </Link>
   );
 }
 

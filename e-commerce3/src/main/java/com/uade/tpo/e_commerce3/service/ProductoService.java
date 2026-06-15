@@ -3,6 +3,7 @@ package com.uade.tpo.e_commerce3.service;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -73,6 +74,18 @@ public class ProductoService {
         return productoRepository.findByVendedorId(vendedor.getId())
                 .stream()
                 .filter(producto -> producto.getCondicionPublicacion() != CondicionPublicacion.ELIMINADA)
+                .map(this::mapToProductoResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductoResponseDTO> getAllProductosAdmin() {
+        return productoRepository.findAll()
+                .stream()
+                .sorted(
+                        Comparator
+                                .comparing(Producto::getFechaPublicacion, Comparator.nullsLast(Comparator.reverseOrder()))
+                                .thenComparing(Producto::getIdProducto, Comparator.nullsLast(Comparator.reverseOrder()))
+                )
                 .map(this::mapToProductoResponseDTO)
                 .collect(Collectors.toList());
     }

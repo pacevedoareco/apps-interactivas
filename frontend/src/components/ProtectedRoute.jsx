@@ -1,10 +1,15 @@
 import { useContext } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import Spinner from "./Spinner";
 
-function ProtectedRoute({ children }) {
-  const { token } = useContext(AuthContext);
+function ProtectedRoute({ children, requireAdmin = false }) {
+  const { token, authLoading, isAdmin } = useContext(AuthContext);
   const location = useLocation();
+
+  if (authLoading) {
+    return <Spinner texto="Validando sesion..." />;
+  }
 
   if (!token) {
     return (
@@ -16,6 +21,10 @@ function ProtectedRoute({ children }) {
         }}
       />
     );
+  }
+
+  if (requireAdmin && !isAdmin) {
+    return <Navigate to="/" replace />;
   }
 
   return children;

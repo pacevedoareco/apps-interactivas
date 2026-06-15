@@ -246,7 +246,7 @@ function ProductListPage() {
               </div>
 
               <div className="product-list__campo">
-                <label htmlFor="estado">Estado</label>
+                <label htmlFor="estado">Estado del producto</label>
                 <select
                   id="estado"
                   name="estado"
