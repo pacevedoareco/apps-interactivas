@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
+import MarcasCarousel from "./components/MarcasCarousel";
+import Footer from "./components/Footer";
 
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
@@ -74,6 +76,8 @@ function App() {
             }
           />
         </Routes>
+        <MarcasCarousel />
+        <Footer />
       </BrowserRouter>
     </AuthProvider>
   );

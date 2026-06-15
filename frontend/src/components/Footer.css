@@ -1,0 +1,63 @@
+.footer {
+  background: var(--color-negro);
+  border-top: 1px solid var(--color-borde);
+  padding: var(--espaciado-xl) var(--espaciado-md);
+  margin-top: var(--espaciado-xl);
+}
+
+.footer__contenido {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--espaciado-lg);
+}
+
+.footer__bloque p {
+  font-size: var(--font-size-detalle);
+  color: var(--color-gris);
+  line-height: 1.6;
+  margin: 0 0 4px 0;
+}
+
+.footer__marca {
+  font-family: var(--font-display);
+  font-size: var(--font-size-subtitulo);
+  color: var(--color-blanco);
+  margin: 0 0 4px 0;
+}
+
+.footer__eslogan {
+  font-style: italic;
+  color: var(--color-verde-claro);
+}
+
+.footer__titulo {
+  font-size: var(--font-size-detalle);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-verde-claro);
+  margin: 0 0 8px 0;
+}
+
+.footer__linea {
+  max-width: 1100px;
+  margin: var(--espaciado-lg) auto 0;
+  padding-top: var(--espaciado-md);
+  border-top: 1px solid var(--color-borde);
+  text-align: center;
+}
+
+.footer__linea p {
+  font-size: 11px;
+  color: var(--color-gris);
+  margin: 0;
+}
+
+@media (max-width: 700px) {
+  .footer__contenido {
+    grid-template-columns: 1fr;
+    gap: var(--espaciado-md);
+  }
+}
