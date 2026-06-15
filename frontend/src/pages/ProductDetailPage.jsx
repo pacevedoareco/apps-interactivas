@@ -56,8 +56,8 @@ function ProductDetailPage() {
   };
 
   if (error) {
-    return <p className="mi-cuenta__error">{error}</p>;
-  }
+  return <p className="mensaje-error">{error}</p>;
+}
 
   if (!producto) {
     return <Spinner texto="Cargando producto..." />;

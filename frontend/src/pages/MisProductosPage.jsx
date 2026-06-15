@@ -37,10 +37,10 @@ function MisProductosPage() {
       </Link>
 
       {loading && <Spinner texto="Cargando tus productos..." />}
-      {error && <p className="mi-cuenta__error">{error}</p>}
+      {error && <p className="mensaje-error">{error}</p>}
 
       {!loading && !error && productos.length === 0 && (
-        <p className="mi-cuenta__vacio">No tenés productos publicados.</p>
+        <p className="mensaje-vacio">No tenés productos publicados.</p>
       )}
 
       <div className="mis-productos__lista">

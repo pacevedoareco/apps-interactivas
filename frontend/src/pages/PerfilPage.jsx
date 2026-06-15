@@ -115,52 +115,54 @@ function PerfilPage() {
     }
   };
 
-  if (!formData) {
-    return <Spinner texto="Cargando perfil..." />;
-  }
-
   return (
     <div className="mi-cuenta">
       <div className="titulo-pagina">
         <span className="titulo-pagina__eyebrow">Área Personal</span>
         <h1 className="titulo-pagina__texto">Mi Perfil</h1>
       </div>
-      {errorBackend && <p className="mi-cuenta__error">{errorBackend}</p>}
 
-      <PerfilCard
-        titulo="Datos Personales"
-        editando={editandoDatos}
-        onEditar={() => setEditandoDatos(true)}
-        onCancelar={() => setEditandoDatos(false)}
-        onSubmit={guardarSeccion(obligatoriosDatos, setEditandoDatos)}
-        vistaLectura={
-          <>
-            <p><strong>Nombre:</strong> {formData.nombre} {formData.apellido}</p>
-            <p><strong>Email:</strong> {formData.email}</p>
-            <p><strong>Teléfono:</strong> {formData.telefono}</p>
-            <p><strong>Fecha de Nacimiento:</strong> {formData.fechaNacimiento}</p>
-          </>
-        }
-      >
-        <DatosPersonalesForm formData={formData} errors={errors} onChange={handleChange} />
-      </PerfilCard>
+      {!formData && !errorBackend && <Spinner texto="Cargando perfil..." />}
+      {errorBackend && <p className="mensaje-error">{errorBackend}</p>}
 
-      <PerfilCard
-        titulo="Dirección"
-        editando={editandoDireccion}
-        onEditar={() => setEditandoDireccion(true)}
-        onCancelar={() => setEditandoDireccion(false)}
-        onSubmit={guardarSeccion(obligatoriosDireccion, setEditandoDireccion)}
-        vistaLectura={
-          <>
-            <p>{formData.calle} {formData.numero}{formData.piso && `, Piso ${formData.piso}`}{formData.departamento && `, Depto ${formData.departamento}`}</p>
-            <p>{formData.ciudad}, {formData.provincia} ({formData.codigoPostal})</p>
-            <p>{formData.pais}</p>
-          </>
-        }
-      >
-        <DireccionForm formData={formData} errors={errors} onChange={handleChange} />
-      </PerfilCard>
+      {formData && (
+        <>
+          <PerfilCard
+            titulo="Datos Personales"
+            editando={editandoDatos}
+            onEditar={() => setEditandoDatos(true)}
+            onCancelar={() => setEditandoDatos(false)}
+            onSubmit={guardarSeccion(obligatoriosDatos, setEditandoDatos)}
+            vistaLectura={
+              <>
+                <p><strong>Nombre:</strong> {formData.nombre} {formData.apellido}</p>
+                <p><strong>Email:</strong> {formData.email}</p>
+                <p><strong>Teléfono:</strong> {formData.telefono}</p>
+                <p><strong>Fecha de Nacimiento:</strong> {formData.fechaNacimiento}</p>
+              </>
+            }
+          >
+            <DatosPersonalesForm formData={formData} errors={errors} onChange={handleChange} />
+          </PerfilCard>
+
+          <PerfilCard
+            titulo="Dirección"
+            editando={editandoDireccion}
+            onEditar={() => setEditandoDireccion(true)}
+            onCancelar={() => setEditandoDireccion(false)}
+            onSubmit={guardarSeccion(obligatoriosDireccion, setEditandoDireccion)}
+            vistaLectura={
+              <>
+                <p>{formData.calle} {formData.numero}{formData.piso && `, Piso ${formData.piso}`}{formData.departamento && `, Depto ${formData.departamento}`}</p>
+                <p>{formData.ciudad}, {formData.provincia} ({formData.codigoPostal})</p>
+                <p>{formData.pais}</p>
+              </>
+            }
+          >
+            <DireccionForm formData={formData} errors={errors} onChange={handleChange} />
+          </PerfilCard>
+        </>
+      )}
     </div>
   );
 }

@@ -8,7 +8,7 @@ function MisPedidosPage() {
         <h1 className="titulo-pagina__texto">Mis Pedidos</h1>
       </div>
 
-      <p className="mi-cuenta__vacio">No tenés pedidos realizados.</p>
+      <p className="mensaje-vacio">No tenés pedidos realizados.</p>
     </div>
   );
 }

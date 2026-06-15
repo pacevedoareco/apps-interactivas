@@ -12,6 +12,11 @@
   --color-fondo: #121f21;
   --color-form-bg: #ffffff;
 
+  /* Colores en formato RGB, para usar con transparencia (rgba) */
+  --color-blanco-rgb: 250, 250, 248;
+  --color-error-rgb: 176, 74, 74;
+  --color-verde-claro-rgb: 31, 111, 107;
+
   /* Tipografía */
   --font-display: Georgia, 'Times New Roman', serif;
   --font-body: 'Segoe UI', Arial, sans-serif;
@@ -49,4 +54,37 @@ a {
 button {
   cursor: pointer;
   font-family: var(--font-body);
+}
+
+.mensaje-vacio {
+  background: rgba(var(--color-blanco-rgb), 0.06);
+  border: 1px solid rgba(var(--color-blanco-rgb), 0.12);
+  border-radius: 2px;
+  padding: var(--espaciado-md) var(--espaciado-lg);
+  text-align: center;
+  font-size: var(--font-size-texto);
+  color: var(--color-gris);
+  margin: 0;
+}
+
+.mensaje-error {
+  background: rgba(var(--color-error-rgb), 0.1);
+  border: 1px solid rgba(var(--color-error-rgb), 0.3);
+  border-radius: 2px;
+  padding: var(--espaciado-md) var(--espaciado-lg);
+  text-align: center;
+  font-size: var(--font-size-texto);
+  color: var(--color-error);
+  margin: 0;
+}
+
+.mensaje-exito {
+  background: rgba(var(--color-verde-claro-rgb), 0.1);
+  border: 1px solid rgba(var(--color-verde-claro-rgb), 0.3);
+  border-radius: 2px;
+  padding: var(--espaciado-md) var(--espaciado-lg);
+  text-align: center;
+  font-size: var(--font-size-texto);
+  color: var(--color-verde-claro);
+  margin: 0;
 }

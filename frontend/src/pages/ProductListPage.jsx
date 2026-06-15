@@ -29,29 +29,23 @@ function ProductListPage() {
     obtenerProductos();
   }, []);
 
-  if (loading) {
-    return <Spinner texto="Cargando perfil..." />;
-  }
-
-  if (error) {
-    return <h2>Error: {error}</h2>;
-  }
-
   return (
     <div className="product-list">
       <h1 className="product-list__titulo">Colección Exclusiva</h1>
 
-      {productos.length === 0 ? (
-        <p>No hay productos disponibles.</p>
-      ) : (
-        <div className="product-list__grid">
-          {productos.map((producto) => (
-            <ProductCard
-              key={producto.idProducto || producto.id}
-              producto={producto}
-            />
-          ))}
-        </div>
+      {loading && <Spinner texto="Cargando productos..." />}
+      {error && <p className="mensaje-error">{error}</p>}
+
+      {!loading && !error && (
+        productos.length === 0 ? (
+          <p className="mensaje-vacio">No hay productos disponibles.</p>
+        ) : (
+          <div className="product-list__grid">
+            {productos.map((producto) => (
+              <ProductCard key={producto.idProducto || producto.id} producto={producto} />
+            ))}
+          </div>
+        )
       )}
     </div>
   );

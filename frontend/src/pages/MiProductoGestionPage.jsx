@@ -158,8 +158,8 @@ function MiProductoGestionPage() {
   };
 
   if (errorBackend && !formData) {
-    return <p className="mi-cuenta__error">{errorBackend}</p>;
-  }
+  return <p className="mensaje-error">{errorBackend}</p>;
+}
 
   if (!formData) {
     return <Spinner texto="Cargando producto..." />;
@@ -175,7 +175,7 @@ function MiProductoGestionPage() {
       <Link to="/mis-productos" className="producto-gestion__volver">← Mis Productos</Link>
     </div>
 
-      {errorBackend && <p className="mi-cuenta__error">{errorBackend}</p>}
+      {errorBackend && <p className="mensaje-error">{errorBackend}</p>}
 
       {!editando ? (
         // Vista de solo lectura
