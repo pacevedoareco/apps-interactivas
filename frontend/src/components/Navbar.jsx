@@ -1,11 +1,13 @@
 import { useState, useContext } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { CartContext } from "../context/CartContext";
 import "./Navbar.css";
 
 function Navbar() {
   const [cuentaAbierta, setCuentaAbierta] = useState(false);
   const { token, isAdmin, logout } = useContext(AuthContext);
+  const { totalItems } = useContext(CartContext);
   const navigate = useNavigate();
   const location = useLocation();
   const publishTarget = token
@@ -27,7 +29,12 @@ function Navbar() {
 
       <nav className="navbar__links">
         <Link to="/" className="navbar__link">Inicio</Link>
-        <Link to="/carrito" className="navbar__link">Carrito</Link>
+        <Link to="/carrito" className="navbar__link navbar__link--carrito">
+          Carrito
+          {totalItems > 0 && (
+            <span className="navbar__carrito-badge">{totalItems}</span>
+          )}
+        </Link>
         <Link
           to={publishTarget}
           state={

@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { obtenerProductoPorId, obtenerProductos } from "../services/productoService";
+import { CartContext } from "../context/CartContext";
+import { AuthContext } from "../context/AuthContext";
 import ProductCard from "../components/ProductCard";
 import Spinner from "../components/Spinner";
 import productPlaceholder from "../assets/product-placeholder.svg";
@@ -81,11 +83,15 @@ function obtenerPublicacionesRelacionadas(productoActual, catalogo) {
 
 function ProductDetailPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { token } = useContext(AuthContext);
+  const { agregarAlCarrito } = useContext(CartContext);
   const [producto, setProducto] = useState(null);
   const [vendedor, setVendedor] = useState(null);
   const [relacionados, setRelacionados] = useState([]);
   const [cantidad, setCantidad] = useState(1);
   const [error, setError] = useState("");
+  const [mensajeCarrito, setMensajeCarrito] = useState("");
 
   useEffect(() => {
     const cargarDatos = async () => {
@@ -125,8 +131,20 @@ function ProductDetailPage() {
     }
   };
 
-  const handleAgregarAlCarrito = () => {
-    console.log(`Agregar ${cantidad} x ${producto.nombre} al carrito`);
+  const handleAgregarAlCarrito = async () => {
+    if (!token) {
+      navigate(`/login?redirect=${encodeURIComponent("/productos/" + id)}`, {
+        state: { message: "Inicia sesion para agregar productos al carrito." },
+      });
+      return;
+    }
+    setMensajeCarrito("");
+    try {
+      await agregarAlCarrito(producto.idProducto, cantidad);
+      setMensajeCarrito("exito");
+    } catch {
+      setMensajeCarrito("error");
+    }
   };
 
   if (error) {
@@ -184,8 +202,14 @@ function ProductDetailPage() {
                 <span className="product-detail__stock">{producto.stock} disponibles</span>
               </div>
 
+              {mensajeCarrito === "exito" && (
+                <p className="mensaje-exito">Producto agregado al carrito.</p>
+              )}
+              {mensajeCarrito === "error" && (
+                <p className="mensaje-error">No se pudo agregar al carrito.</p>
+              )}
               <button className="product-detail__btn" onClick={handleAgregarAlCarrito}>
-                Agregar al Carrito
+                {token ? "Agregar al Carrito" : "Iniciar sesion para comprar"}
               </button>
             </div>
           ) : (

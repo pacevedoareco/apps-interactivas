@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
+import { CartProvider } from "./context/CartContext";
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import MarcasCarousel from "./components/MarcasCarousel";
@@ -20,13 +21,21 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <CartProvider>
         <Navbar />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/productos/:id" element={<ProductDetailPage />} />
-          <Route path="/carrito" element={<CarritoPage />} />
+          <Route
+            path="/carrito"
+            element={
+              <ProtectedRoute>
+                <CarritoPage />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/mis-pedidos"
             element={
@@ -78,6 +87,7 @@ function App() {
         </Routes>
         <MarcasCarousel />
         <Footer />
+        </CartProvider>
       </BrowserRouter>
     </AuthProvider>
   );
