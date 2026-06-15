@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import productPlaceholder from "../assets/product-placeholder.svg";
 import "./ProductCard.css";
 
 function ProductCard({ producto }) {
@@ -12,7 +13,15 @@ function ProductCard({ producto }) {
     <div className="product-card">
 
       <div className="product-card__imagen">
-        <span className="product-card__imagen-placeholder">Sin imagen</span>
+        <img
+          src={producto.imagenUrl || productPlaceholder}
+          alt={producto.nombre}
+          className="product-card__imagen-img"
+          onError={(event) => {
+            event.currentTarget.onerror = null;
+            event.currentTarget.src = productPlaceholder;
+          }}
+        />
         {producto.estadoProducto && (
           <span className="product-card__estado">
             {estadoLabel[producto.estadoProducto]}

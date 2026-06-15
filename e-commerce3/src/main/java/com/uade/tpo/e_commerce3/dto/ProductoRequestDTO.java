@@ -12,6 +12,7 @@ public class ProductoRequestDTO {
     private Double precio;
     private Integer stock;
     private String marca;
+    private String imagenUrl;
     private String estadoProducto;
     private String condicionPublicacion;
     private Long vendedorId;

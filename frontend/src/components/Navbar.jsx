@@ -1,12 +1,16 @@
 import { useState, useContext } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import { Link, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 
 function Navbar() {
   const [cuentaAbierta, setCuentaAbierta] = useState(false);
   const { token, logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
+  const publishTarget = token
+    ? "/mis-productos/nuevo"
+    : `/login?redirect=${encodeURIComponent("/mis-productos/nuevo")}`;
 
   const handleLogout = () => {
     logout();
@@ -24,6 +28,20 @@ function Navbar() {
       <nav className="navbar__links">
         <Link to="/" className="navbar__link">Inicio</Link>
         <Link to="/carrito" className="navbar__link">Carrito</Link>
+        <Link
+          to={publishTarget}
+          state={
+            token
+              ? undefined
+              : {
+                  from: location.pathname,
+                  message: "Inicia sesion para crear una nueva publicacion.",
+                }
+          }
+          className="navbar__link"
+        >
+          Publicar
+        </Link>
 
         {token && (
           <div
@@ -33,7 +51,7 @@ function Navbar() {
           >
             <span className="navbar__link navbar__link--dropdown">
               Mi Cuenta
-              <span className="navbar__arrow">▾</span>
+              <span className="navbar__arrow">v</span>
             </span>
 
             {cuentaAbierta && (
@@ -50,12 +68,12 @@ function Navbar() {
 
       <div className="navbar__auth">
         {token ? (
-            <button className="navbar__link navbar__logout" onClick={handleLogout}>
-                Cerrar Sesión
-            </button>
+          <button className="navbar__link navbar__logout" onClick={handleLogout}>
+            Cerrar Sesion
+          </button>
         ) : (
           <>
-            <Link to="/login" className="navbar__link">Iniciar Sesión</Link>
+            <Link to="/login" className="navbar__link">Iniciar Sesion</Link>
             <Link to="/register" className="navbar__btn">Registrarse</Link>
           </>
         )}

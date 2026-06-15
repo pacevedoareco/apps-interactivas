@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { obtenerProductoPorId } from "../services/productoService";
 import Spinner from "../components/Spinner";
+import productPlaceholder from "../assets/product-placeholder.svg";
 import "../styles/ProductDetailPage.css";
 
 const estadoLabel = {
@@ -71,7 +72,15 @@ function ProductDetailPage() {
 
         <div className="product-detail__contenido">
         <div className="product-detail__imagen">
-          <span className="product-detail__imagen-placeholder">Sin imagen</span>
+          <img
+            src={producto.imagenUrl || productPlaceholder}
+            alt={producto.nombre}
+            className="product-detail__imagen-img"
+            onError={(event) => {
+              event.currentTarget.onerror = null;
+              event.currentTarget.src = productPlaceholder;
+            }}
+          />
           <span className="product-detail__estado">{estadoLabel[producto.estadoProducto]}</span>
         </div>
 

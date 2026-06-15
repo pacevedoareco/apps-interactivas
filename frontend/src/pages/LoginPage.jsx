@@ -1,14 +1,13 @@
 import { useState, useContext } from "react";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { loginUsuario } from "../services/authService";
 import { AuthContext } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 import FormInput from "../components/FormInput";
 import "../styles/AuthPages.css";
 
-// Configuración de los campos del formulario
 const camposFormulario = [
   { label: "Email", name: "email", type: "email" },
-  { label: "Contraseña", name: "password", type: "password" },
+  { label: "Contrasena", name: "password", type: "password" },
 ];
 
 const valoresIniciales = {
@@ -17,22 +16,21 @@ const valoresIniciales = {
 };
 
 function LoginPage() {
-  // formData: valores ingresados por el usuario
-  // errors: mensajes de validación por campo
-  // errorBackend: mensaje de error devuelto por el backend
   const [formData, setFormData] = useState(valoresIniciales);
   const [errors, setErrors] = useState({});
   const [errorBackend, setErrorBackend] = useState("");
 
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const redirectPath = searchParams.get("redirect") || "/";
+  const loginMessage = location.state?.message || "";
 
-  // Actualiza el formulario a medida que el usuario escribe
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Validaciones del formulario
   const validar = () => {
     const erroresEncontrados = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -40,22 +38,20 @@ function LoginPage() {
     if (!formData.email) {
       erroresEncontrados.email = "El email es obligatorio";
     } else if (!emailRegex.test(formData.email)) {
-      erroresEncontrados.email = "El email no tiene un formato válido";
+      erroresEncontrados.email = "El email no tiene un formato valido";
     }
 
     if (!formData.password) {
-      erroresEncontrados.password = "La contraseña es obligatoria";
+      erroresEncontrados.password = "La contrasena es obligatoria";
     }
 
     return erroresEncontrados;
   };
 
-  // Envío del formulario al backend
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorBackend("");
 
-    // Validación
     const erroresEncontrados = validar();
     if (Object.keys(erroresEncontrados).length > 0) {
       setErrors(erroresEncontrados);
@@ -63,21 +59,21 @@ function LoginPage() {
     }
     setErrors({});
 
-    // POST al backend
     try {
       const token = await loginUsuario(formData);
       login(token);
-      navigate("/");
+      navigate(redirectPath, { replace: true });
     } catch (error) {
       setErrorBackend(error.message);
     }
   };
 
-  // Formulario de login
   return (
     <div className="auth">
       <form className="auth__form" onSubmit={handleSubmit}>
-        <h1 className="auth__titulo">Iniciar Sesión</h1>
+        <h1 className="auth__titulo">Iniciar Sesion</h1>
+
+        {loginMessage && <p className="mensaje-vacio">{loginMessage}</p>}
 
         {camposFormulario.map((campo) => (
           <FormInput

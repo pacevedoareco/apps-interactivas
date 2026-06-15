@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-labelledby="title desc">
+  <title id="title">Sin imagen</title>
+  <desc id="desc">Imagen placeholder para productos sin foto.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#d6ddd9" />
+      <stop offset="100%" stop-color="#a9b5af" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)" />
+  <g fill="none" stroke="#f6f6f2" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" opacity="0.95">
+    <rect x="185" y="140" width="430" height="320" rx="26" />
+    <path d="M235 390l95-95 85 85 65-65 85 75" />
+    <circle cx="340" cy="235" r="34" fill="#f6f6f2" stroke="none" />
+  </g>
+  <text x="50%" y="86%" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="34" letter-spacing="6" fill="#f6f6f2">
+    SIN IMAGEN
+  </text>
+</svg>

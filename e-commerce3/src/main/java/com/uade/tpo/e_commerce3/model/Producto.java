@@ -49,6 +49,8 @@ public class Producto {
 
     private String marca;
 
+    private String imagenUrl;
+
     @Enumerated(EnumType.STRING)
     private EstadoProducto estadoProducto;
 
@@ -61,11 +63,6 @@ public class Producto {
     @JoinColumn(name = "vendedor_id", nullable = false)
     private Usuario vendedor;
 
-    /*
-     * Un producto puede pertenecer a varias categorías.
-     * Se mantiene ManyToMany porque en el dominio del marketplace
-     * un mismo producto puede clasificarse, por ejemplo, como "Relojes" y "Lujo".
-     */
     @ManyToMany
     @JoinTable(
         name = "producto_categoria",

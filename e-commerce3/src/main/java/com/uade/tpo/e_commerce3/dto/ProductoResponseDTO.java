@@ -16,6 +16,7 @@ public class ProductoResponseDTO {
     private Double precio;
     private Integer stock;
     private String marca;
+    private String imagenUrl;
     private String estadoProducto;
     private String condicionPublicacion;
     private LocalDate fechaPublicacion;
