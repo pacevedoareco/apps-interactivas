@@ -40,7 +40,7 @@ function MisProductosPage() {
       {error && <p className="mi-cuenta__error">{error}</p>}
 
       {!loading && !error && productos.length === 0 && (
-        <p>Todavía no publicaste productos.</p>
+        <p className="mi-cuenta__vacio">No tenés productos publicados.</p>
       )}
 
       <div className="mis-productos__lista">
