@@ -1,17 +1,17 @@
 .product-list {
   padding: var(--espaciado-xl);
   display: grid;
-  gap: var(--espaciado-lg);
+  gap: var(--espaciado-md);
 }
 
 .product-list__titulo {
   font-family: var(--font-display);
   font-size: var(--font-size-titulo);
   color: var(--color-blanco);
-  margin: 0 0 var(--espaciado-lg) 0;
+  margin: 0 0 var(--espaciado-sm) 0; 
   text-align: center;
   position: relative;
-  padding-bottom: var(--espaciado-md);
+  padding-bottom: var(--espaciado-sm); 
 }
 
 .product-list__titulo::after {
@@ -23,6 +23,68 @@
   width: 80px;
   height: 2px;
   background: var(--color-form-bg);
+}
+
+.product-list__buscador {
+  display: flex;
+  justify-content: center;
+}
+
+.product-list__input-busqueda {
+  width: 100%;
+  max-width: 480px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid rgba(var(--color-blanco-rgb), 0.14);
+  border-radius: 4px;
+  background: rgba(var(--color-blanco-rgb), 0.96);
+  color: var(--color-negro);
+  font-size: var(--font-size-texto);
+}
+
+.product-list__input-busqueda::placeholder {
+  color: var(--color-gris);
+}
+
+.product-list__acciones-filtros {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.product-list__toggle-filtros {
+  min-height: 30px;
+  padding: 0 18px 0 22px;
+  border: 1px solid rgba(var(--color-verde-claro-rgb), 0.4);
+  background: rgba(var(--color-verde-claro-rgb), 0.12);
+  color: var(--color-blanco);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: var(--font-size-detalle);
+}
+
+.product-list__toggle-filtros:hover {
+  background: rgba(var(--color-verde-claro-rgb), 0.2); 
+}
+
+.product-list__flecha {
+  color: var(--color-verde-claro);
+  font-size: 16px;
+  margin-left: 6px;
+}
+
+.product-list__limpiar:hover {
+  background: rgba(var(--color-blanco-rgb), 0.06);
+}
+
+.product-list__panel-filtros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--espaciado-md);
+  padding: var(--espaciado-lg);
+  background: rgba(var(--color-blanco-rgb), 0.04);
+  border: 1px solid rgba(var(--color-blanco-rgb), 0.1);
+  border-radius: 6px;
 }
 
 .product-list__grid {
@@ -81,9 +143,9 @@
 }
 
 .product-list__limpiar {
-  min-height: 44px;
-  width: 100%;
-  padding: 0 18px;
+  min-height: 38px; 
+  width: auto; 
+  padding: 0 18px; 
   border: 1px solid rgba(var(--color-blanco-rgb), 0.18);
   background: transparent;
   color: var(--color-blanco);

@@ -31,6 +31,7 @@ function ProductListPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [cantidadVisible, setCantidadVisible] = useState(PRODUCTOS_POR_BLOQUE);
+  const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
   const [filtros, setFiltros] = useState({
     busqueda: searchParams.get("q") ?? FILTROS_INICIALES.busqueda,
     categoria: searchParams.get("categoria") ?? FILTROS_INICIALES.categoria,
@@ -205,7 +206,7 @@ function ProductListPage() {
 
   return (
     <div className="product-list">
-      <h1 className="product-list__titulo">Coleccion Exclusiva</h1>
+      <h1 className="product-list__titulo">Colección Exclusiva</h1>
 
       {loading && <Spinner texto="Cargando productos..." />}
       {error && <p className="mensaje-error">{error}</p>}
@@ -215,92 +216,81 @@ function ProductListPage() {
           <p className="mensaje-vacio">No hay productos disponibles.</p>
         ) : (
           <>
-            <section className="product-list__filtros" aria-label="Filtros del catalogo">
-              <div className="product-list__campo product-list__campo--busqueda">
-                <label htmlFor="busqueda">Buscar</label>
-                <input
-                  id="busqueda"
-                  name="busqueda"
-                  type="search"
-                  placeholder="Producto, marca o categoria"
-                  value={filtros.busqueda}
-                  onChange={handleFiltroChange}
-                />
-              </div>
+<div className="product-list__buscador">
+  <input
+    id="busqueda"
+    name="busqueda"
+    type="search"
+    placeholder="Producto, marca o categoria"
+    value={filtros.busqueda}
+    onChange={handleFiltroChange}
+    className="product-list__input-busqueda"
+  />
+</div>
 
-              <div className="product-list__campo">
-                <label htmlFor="categoria">Categoria</label>
-                <select
-                  id="categoria"
-                  name="categoria"
-                  value={filtros.categoria}
-                  onChange={handleFiltroChange}
-                >
-                  <option value="todas">Todas</option>
-                  {categorias.map((categoria) => (
-                    <option key={categoria.idCategoria} value={categoria.nombre}>
-                      {categoria.nombre}
-                    </option>
-                  ))}
-                </select>
-              </div>
+<div className="product-list__acciones-filtros">
+  <button
+    type="button"
+    className="product-list__limpiar"
+    onClick={limpiarFiltros}
+    disabled={!hayFiltrosActivos}
+  >
+    Limpiar filtros
+  </button>
+  <button
+    type="button"
+    className="product-list__toggle-filtros"
+    onClick={() => setFiltrosAbiertos((prev) => !prev)}
+  >
+    Filtros <span className="product-list__flecha">{filtrosAbiertos ? "▴" : "▾"}</span>
+  </button>
+</div>
 
-              <div className="product-list__campo">
-                <label htmlFor="estado">Estado del producto</label>
-                <select
-                  id="estado"
-                  name="estado"
-                  value={filtros.estado}
-                  onChange={handleFiltroChange}
-                >
-                  <option value="todos">Todos</option>
-                  <option value="NUEVO">Nuevo</option>
-                  <option value="USADO">Usado</option>
-                  <option value="EDICION_LIMITADA">Edicion limitada</option>
-                </select>
-              </div>
+      {filtrosAbiertos && (
+        <section className="product-list__panel-filtros" aria-label="Filtros del catalogo">
+          <div className="product-list__campo">
+            <label htmlFor="categoria">Categoria</label>
+            <select id="categoria" name="categoria" value={filtros.categoria} onChange={handleFiltroChange}>
+              <option value="todas">Todas</option>
+              {categorias.map((categoria) => (
+                <option key={categoria.idCategoria} value={categoria.nombre}>
+                  {categoria.nombre}
+                </option>
+              ))}
+            </select>
+          </div>
 
-              <div className="product-list__campo">
-                <label htmlFor="stock">Disponibilidad</label>
-                <select
-                  id="stock"
-                  name="stock"
-                  value={filtros.stock}
-                  onChange={handleFiltroChange}
-                >
-                  <option value="todos">Todos</option>
-                  <option value="disponibles">Con stock</option>
-                  <option value="sin-stock">Sin stock</option>
-                </select>
-              </div>
+          <div className="product-list__campo">
+            <label htmlFor="estado">Estado del producto</label>
+            <select id="estado" name="estado" value={filtros.estado} onChange={handleFiltroChange}>
+              <option value="todos">Todos</option>
+              <option value="NUEVO">Nuevo</option>
+              <option value="USADO">Usado</option>
+              <option value="EDICION_LIMITADA">Edicion limitada</option>
+            </select>
+          </div>
 
-              <div className="product-list__campo">
-                <label htmlFor="orden">Ordenar por</label>
-                <select
-                  id="orden"
-                  name="orden"
-                  value={filtros.orden}
-                  onChange={handleFiltroChange}
-                >
-                  <option value="recientes">Mas recientes</option>
-                  <option value="precio-asc">Precio: menor a mayor</option>
-                  <option value="precio-desc">Precio: mayor a menor</option>
-                  <option value="nombre-asc">Nombre: A-Z</option>
-                  <option value="nombre-desc">Nombre: Z-A</option>
-                </select>
-              </div>
+          <div className="product-list__campo">
+            <label htmlFor="stock">Disponibilidad</label>
+            <select id="stock" name="stock" value={filtros.stock} onChange={handleFiltroChange}>
+              <option value="todos">Todos</option>
+              <option value="disponibles">Con stock</option>
+              <option value="sin-stock">Sin stock</option>
+            </select>
+          </div>
 
-              <div className="product-list__acciones">
-                <button
-                  type="button"
-                  className="product-list__limpiar"
-                  onClick={limpiarFiltros}
-                  disabled={!hayFiltrosActivos}
-                >
-                  Limpiar filtros
-                </button>
-              </div>
-            </section>
+          <div className="product-list__campo">
+            <label htmlFor="orden">Ordenar por</label>
+            <select id="orden" name="orden" value={filtros.orden} onChange={handleFiltroChange}>
+              <option value="recientes">Mas recientes</option>
+              <option value="precio-asc">Precio: menor a mayor</option>
+              <option value="precio-desc">Precio: mayor a menor</option>
+              <option value="nombre-asc">Nombre: A-Z</option>
+              <option value="nombre-desc">Nombre: Z-A</option>
+            </select>
+          </div>
+        </section>
+      )}
 
             <div className="product-list__resumen">
               <p>
