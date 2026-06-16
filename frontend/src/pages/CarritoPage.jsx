@@ -31,6 +31,7 @@ function CarritoPage() {
   const handleVaciar = async () => {
     try {
       await vaciarCarrito();
+      window.scrollTo(0, 0);
     } catch {
       // vaciar errors are non-critical
     }
@@ -95,7 +96,7 @@ function CarritoPage() {
         </div>
         <p className="mensaje-vacio">Tu carrito esta vacio.</p>
         <Link to="/" className="carrito__link-catalogo">
-          Explorar el catalogo →
+          Explorar el la colección →
         </Link>
       </div>
     );
@@ -113,7 +114,9 @@ function CarritoPage() {
           {items.map((item) => (
             <div key={item.id} className="carrito__item">
               <div className="carrito__item-info">
-                <p className="carrito__item-nombre">{item.nombreProducto}</p>
+                <Link to={`/productos/${item.productoId}`} className="carrito__item-nombre">
+                  {item.nombreProducto}
+                </Link>
                 <p className="carrito__item-precio">
                   ${item.precioUnitario?.toLocaleString("es-AR")} c/u
                 </p>
