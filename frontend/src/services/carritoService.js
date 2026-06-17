@@ -8,9 +8,14 @@ function getHeaders() {
   };
 }
 
+async function construirError(response, mensajeFallback) {
+  const mensaje = await response.text();
+  throw new Error(mensaje || mensajeFallback);
+}
+
 export async function obtenerCarrito() {
   const response = await fetch(API_URL, { headers: getHeaders() });
-  if (!response.ok) throw new Error("No se pudo obtener el carrito");
+  if (!response.ok) await construirError(response, "No se pudo obtener el carrito");
   return response.json();
 }
 
@@ -20,7 +25,7 @@ export async function agregarItemAlCarrito(productoId, cantidad) {
     headers: getHeaders(),
     body: JSON.stringify({ productoId, cantidad }),
   });
-  if (!response.ok) throw new Error("No se pudo agregar el producto al carrito");
+  if (!response.ok) await construirError(response, "No se pudo agregar el producto al carrito");
   return response.json();
 }
 
@@ -30,7 +35,7 @@ export async function modificarItemCarrito(itemId, cantidad) {
     headers: getHeaders(),
     body: JSON.stringify({ cantidad }),
   });
-  if (!response.ok) throw new Error("No se pudo modificar la cantidad");
+  if (!response.ok) await construirError(response, "No se pudo modificar la cantidad");
   return response.json();
 }
 
@@ -39,7 +44,7 @@ export async function eliminarItemCarrito(itemId) {
     method: "DELETE",
     headers: getHeaders(),
   });
-  if (!response.ok) throw new Error("No se pudo eliminar el item");
+  if (!response.ok) await construirError(response, "No se pudo eliminar el item");
   return response.json();
 }
 
@@ -48,7 +53,7 @@ export async function vaciarCarritoAPI() {
     method: "DELETE",
     headers: getHeaders(),
   });
-  if (!response.ok) throw new Error("No se pudo vaciar el carrito");
+  if (!response.ok) await construirError(response, "No se pudo vaciar el carrito");
 }
 
 export async function checkoutCarrito() {

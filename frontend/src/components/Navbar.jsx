@@ -1,13 +1,13 @@
 import { useState, useContext } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { AuthContext } from "../context/AuthContext";
-import { CartContext } from "../context/CartContext";
 import "./Navbar.css";
 
 function Navbar() {
   const [cuentaAbierta, setCuentaAbierta] = useState(false);
   const { token, isAdmin, logout } = useContext(AuthContext);
-  const { totalItems } = useContext(CartContext);
+  const totalItems = useSelector((state) => state.carrito.totalItems);
   const navigate = useNavigate();
   const location = useLocation();
   const publishTarget = token
@@ -41,9 +41,9 @@ function Navbar() {
             token
               ? undefined
               : {
-                  from: location.pathname,
-                  message: "Inicia sesion para crear una nueva publicacion.",
-                }
+                from: location.pathname,
+                message: "Inicia sesion para crear una nueva publicacion.",
+              }
           }
           className="navbar__link"
         >

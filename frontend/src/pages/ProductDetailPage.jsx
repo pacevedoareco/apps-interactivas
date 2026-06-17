@@ -1,7 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { obtenerProductoPorId, obtenerProductos } from "../services/productoService";
-import { CartContext } from "../context/CartContext";
+import { agregarAlCarritoThunk } from "../store/slices/carritoSlice";
 import { AuthContext } from "../context/AuthContext";
 import ProductCard from "../components/ProductCard";
 import Spinner from "../components/Spinner";
@@ -36,20 +37,29 @@ function obtenerPublicacionesRelacionadas(productoActual, catalogo) {
       if (mismoEstado) puntaje += 1;
       if (conStock) puntaje += 1;
 
-      return { ...item, coincidenciasCategoria, mismoVendedor, puntaje };
+      return { ...item, coincidenciasCategoria, puntaje };
     })
     .sort((itemA, itemB) => {
       if (itemB.puntaje !== itemA.puntaje) return itemB.puntaje - itemA.puntaje;
-      if (itemB.coincidenciasCategoria !== itemA.coincidenciasCategoria)
+      if (itemB.coincidenciasCategoria !== itemA.coincidenciasCategoria) {
         return itemB.coincidenciasCategoria - itemA.coincidenciasCategoria;
+      }
+
       const fechaA = itemA.fechaPublicacion ? new Date(itemA.fechaPublicacion).getTime() : 0;
       const fechaB = itemB.fechaPublicacion ? new Date(itemB.fechaPublicacion).getTime() : 0;
-      if (fechaB !== fechaA) return fechaB - fechaA;
+
+      if (fechaB !== fechaA) {
+        return fechaB - fechaA;
+      }
+
       return (itemB.idProducto ?? 0) - (itemA.idProducto ?? 0);
     });
 
   const relacionados = candidatos.filter((item) => item.puntaje > 0).slice(0, MAX_RECOMENDADOS);
-  if (relacionados.length === MAX_RECOMENDADOS) return relacionados;
+
+  if (relacionados.length === MAX_RECOMENDADOS) {
+    return relacionados;
+  }
 
   const fallback = candidatos.filter(
     (item) => !relacionados.some((relacionado) => relacionado.idProducto === item.idProducto)
@@ -61,8 +71,10 @@ function obtenerPublicacionesRelacionadas(productoActual, catalogo) {
 function ProductDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { token } = useContext(AuthContext);
-  const { agregarAlCarrito, items } = useContext(CartContext);
+  const items = useSelector((state) => state.carrito.items);
+  const totalItems = useSelector((state) => state.carrito.totalItems);
   const [producto, setProducto] = useState(null);
   const [vendedor, setVendedor] = useState(null);
   const [relacionados, setRelacionados] = useState([]);
@@ -102,9 +114,9 @@ function ProductDetailPage() {
     cargarDatos();
   }, [id]);
 
-  // Variables calculadas para manejo de stock y carrito
-  const itemEnCarrito = items.find((i) => i.productoId === producto?.idProducto);
+  const itemEnCarrito = items.find((item) => item.productoId === producto?.idProducto);
   const cantidadEnCarrito = itemEnCarrito ? itemEnCarrito.cantidad : 0;
+  const disponibleActual = Math.max((producto?.stock ?? 0) - cantidadEnCarrito, 0);
   const limiteAlcanzado = cantidadEnCarrito + cantidad > (producto?.stock ?? 0);
 
   const handleCantidadChange = (event) => {
@@ -116,7 +128,7 @@ function ProductDetailPage() {
 
   const handleAgregarAlCarrito = async () => {
     if (!token) {
-      navigate(`/login?redirect=${encodeURIComponent("/productos/" + id)}`, {
+      navigate(`/login?redirect=${encodeURIComponent(`/productos/${id}`)}`, {
         state: { message: "Inicia sesion para agregar productos al carrito." },
       });
       return;
@@ -128,8 +140,11 @@ function ProductDetailPage() {
     }
 
     setMensajeCarrito("");
+
     try {
-      await agregarAlCarrito(producto.idProducto, cantidad);
+      await dispatch(
+        agregarAlCarritoThunk({ productoId: producto.idProducto, cantidad })
+      ).unwrap();
       setMensajeCarrito("exito");
       setTimeout(() => setMensajeCarrito(""), 3500);
     } catch {
@@ -184,44 +199,45 @@ function ProductDetailPage() {
                   id="cantidad"
                   type="number"
                   min="1"
-                  max={producto.stock - cantidadEnCarrito}
+                  max={Math.max(disponibleActual, 1)}
                   value={cantidad}
                   onChange={handleCantidadChange}
                 />
                 <span className="product-detail__stock">
-                  {producto.stock - cantidadEnCarrito} disponibles
+                  {disponibleActual} disponibles
                 </span>
               </div>
 
               <div className="product-detail__mensaje">
                 {mensajeCarrito === "exito" && (
-                  <p className="mensaje-exito">¡Producto agregado al carrito!</p>
+                  <p className="mensaje-exito">Producto agregado al carrito.</p>
                 )}
                 {mensajeCarrito === "stock" && (
                   <p className="mensaje-error">
-                    Ya tenés {cantidadEnCarrito} en el carrito. No podés superar el stock disponible ({producto.stock}).
+                    Ya tenes {cantidadEnCarrito} en el carrito. No podes superar el stock disponible ({producto.stock}).
                   </p>
                 )}
                 {mensajeCarrito === "error" && (
-                  <p className="mensaje-error">No se pudo agregar al carrito. Intentá de nuevo.</p>
+                  <p className="mensaje-error">No se pudo agregar al carrito. Intenta de nuevo.</p>
                 )}
               </div>
+
               <button
                 className="product-detail__btn"
                 onClick={handleAgregarAlCarrito}
-                disabled={token && limiteAlcanzado}
+                disabled={token && (limiteAlcanzado || disponibleActual === 0)}
               >
-                {token ? "Agregar al carrito" : "Iniciá sesión para comprar"}
+                {token ? "Agregar al carrito" : "Inicia sesion para comprar"}
               </button>
 
-            <div className="product-detail__acciones-carrito">
-              {items.length > 0 && (
-                <>
-                  <Link to="/" className="product-detail__btn--secundario">← Seguir comprando</Link>
-                  <Link to="/carrito" className="product-detail__btn--secundario">Ir al carrito →</Link>
-                </>
-              )}
-            </div>
+              <div className="product-detail__acciones-carrito">
+                {totalItems > 0 && (
+                  <>
+                    <Link to="/" className="product-detail__btn--secundario">← Seguir comprando</Link>
+                    <Link to="/carrito" className="product-detail__btn--secundario">Ir al carrito →</Link>
+                  </>
+                )}
+              </div>
             </div>
           ) : (
             <p className="product-detail__sin-stock">Sin stock disponible</p>

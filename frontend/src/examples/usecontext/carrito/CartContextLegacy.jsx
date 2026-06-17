@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { AuthContext } from "./AuthContext";
+import { AuthContext } from "../../../context/AuthContext";
 import {
   agregarItemAlCarrito,
   eliminarItemCarrito,
@@ -7,11 +7,11 @@ import {
   obtenerCarrito,
   vaciarCarritoAPI,
   checkoutCarrito,
-} from "../services/carritoService";
+} from "../../../services/carritoService";
 
-export const CartContext = createContext(null);
+export const CartContextLegacy = createContext(null);
 
-export function CartProvider({ children }) {
+export function CartProviderLegacy({ children }) {
   const { token } = useContext(AuthContext);
   const [carrito, setCarrito] = useState(null);
 
@@ -20,6 +20,7 @@ export function CartProvider({ children }) {
       setCarrito(null);
       return;
     }
+
     try {
       const data = await obtenerCarrito();
       setCarrito(data);
@@ -42,6 +43,7 @@ export function CartProvider({ children }) {
     if (cantidad < 1) {
       return eliminarDelCarrito(itemId);
     }
+
     const data = await modificarItemCarrito(itemId, cantidad);
     setCarrito(data);
   };
@@ -67,7 +69,7 @@ export function CartProvider({ children }) {
   const totalPrecio = carrito?.total ?? 0;
 
   return (
-    <CartContext.Provider
+    <CartContextLegacy.Provider
       value={{
         items,
         totalItems,
@@ -80,6 +82,6 @@ export function CartProvider({ children }) {
       }}
     >
       {children}
-    </CartContext.Provider>
+    </CartContextLegacy.Provider>
   );
 }

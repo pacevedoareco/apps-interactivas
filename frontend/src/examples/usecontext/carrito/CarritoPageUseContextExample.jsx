@@ -1,50 +1,39 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  cambiarCantidadThunk,
-  checkoutThunk,
-  eliminarDelCarritoThunk,
-  vaciarCarritoThunk,
-} from "../store/slices/carritoSlice";
-import "../styles/CarritoPage.css";
+import { CartContextLegacy } from "./CartContextLegacy";
+import "../../../styles/CarritoPage.css";
 
-function CarritoPage() {
-  const dispatch = useDispatch();
-  const items = useSelector((state) => state.carrito.items);
-  const totalPrecio = useSelector((state) => state.carrito.totalPrecio);
-  const errorCarrito = useSelector((state) => state.carrito.error);
+function CarritoPageUseContextExample() {
+  const { items, totalPrecio, cambiarCantidad, eliminarDelCarrito, vaciarCarrito, checkout } =
+    useContext(CartContextLegacy);
   const [esRegalo, setEsRegalo] = useState(false);
   const [cargandoCheckout, setCargandoCheckout] = useState(false);
   const [errorCheckout, setErrorCheckout] = useState("");
-  const [errorCantidad, setErrorCantidad] = useState("");
   const [pedidoConfirmado, setPedidoConfirmado] = useState(null);
   const navigate = useNavigate();
 
   const handleCambiarCantidad = async (itemId, nuevaCantidad) => {
-    setErrorCantidad("");
     try {
-      await dispatch(cambiarCantidadThunk({ itemId, cantidad: nuevaCantidad })).unwrap();
-    } catch (error) {
-      setErrorCantidad(error.message || "No se pudo modificar la cantidad.");
+      await cambiarCantidad(itemId, nuevaCantidad);
+    } catch {
+      // example only
     }
   };
 
   const handleEliminar = async (itemId) => {
-    setErrorCantidad("");
     try {
-      await dispatch(eliminarDelCarritoThunk(itemId)).unwrap();
+      await eliminarDelCarrito(itemId);
     } catch {
-      // removal errors are non-critical
+      // example only
     }
   };
 
   const handleVaciar = async () => {
     try {
-      await dispatch(vaciarCarritoThunk()).unwrap();
+      await vaciarCarrito();
       window.scrollTo(0, 0);
     } catch {
-      // vaciar errors are non-critical
+      // example only
     }
   };
 
@@ -53,12 +42,12 @@ function CarritoPage() {
     setErrorCheckout("");
 
     try {
-      const pedido = await dispatch(checkoutThunk()).unwrap();
+      const pedido = await checkout();
       setPedidoConfirmado(pedido);
     } catch (err) {
       if (err.errores?.length) {
         const lista = err.errores
-          .map((item) => `${item.nombreProducto}: pediste ${item.cantidadSolicitada}, quedan ${item.stockDisponible}`)
+          .map((e) => `${e.nombreProducto}: pediste ${e.cantidadSolicitada}, quedan ${e.stockDisponible}`)
           .join("; ");
         setErrorCheckout(`Stock insuficiente - ${lista}`);
       } else {
@@ -73,7 +62,7 @@ function CarritoPage() {
     return (
       <div className="carrito carrito--confirmado">
         <div className="carrito__confirmacion">
-          <span className="carrito__confirmacion-icono">✓</span>
+          <span className="carrito__confirmacion-icono">OK</span>
           <h1 className="carrito__confirmacion-titulo">Pedido confirmado</h1>
           <p className="carrito__confirmacion-subtitulo">
             Tu pedido #{pedidoConfirmado.id} fue registrado exitosamente.
@@ -107,9 +96,8 @@ function CarritoPage() {
           <h1 className="titulo-pagina__texto">Carrito</h1>
         </div>
         <p className="mensaje-vacio">Tu carrito esta vacio.</p>
-        {errorCarrito && <p className="mensaje-error">{errorCarrito}</p>}
         <Link to="/" className="carrito__link-catalogo">
-          Explorar la coleccion →
+          Explorar la coleccion
         </Link>
       </div>
     );
@@ -121,8 +109,6 @@ function CarritoPage() {
         <span className="titulo-pagina__eyebrow">Tu seleccion</span>
         <h1 className="titulo-pagina__texto">Carrito</h1>
       </div>
-
-      {errorCantidad && <p className="mensaje-error">{errorCantidad}</p>}
 
       <div className="carrito__layout">
         <div className="carrito__items">
@@ -138,35 +124,23 @@ function CarritoPage() {
               </div>
 
               <div className="carrito__item-controles">
-                {item.stockDisponible !== null && item.stockDisponible !== undefined && (
-                  <span className={`carrito__stock-tag ${item.stockSuficiente ? "carrito__stock-tag--ok" : "carrito__stock-tag--error"}`}>
-                    {item.stockDisponible} disponibles
-                  </span>
-                )}
                 <div className="carrito__cantidad">
                   <button
                     className="carrito__cantidad-btn"
                     onClick={() => handleCambiarCantidad(item.id, item.cantidad - 1)}
                     aria-label="Reducir cantidad"
                   >
-                    −
+                    -
                   </button>
                   <span className="carrito__cantidad-valor">{item.cantidad}</span>
                   <button
                     className="carrito__cantidad-btn"
                     onClick={() => handleCambiarCantidad(item.id, item.cantidad + 1)}
                     aria-label="Aumentar cantidad"
-                    disabled={item.stockDisponible !== null && item.stockDisponible !== undefined && item.cantidad >= item.stockDisponible}
                   >
                     +
                   </button>
                 </div>
-
-                {item.stockSuficiente === false && (
-                  <p className="carrito__stock-alerta">
-                    Ajusta la cantidad: solo quedan {item.stockDisponible} unidades.
-                  </p>
-                )}
 
                 <p className="carrito__item-subtotal">
                   ${item.subtotal?.toLocaleString("es-AR")}
@@ -188,7 +162,7 @@ function CarritoPage() {
               Vaciar carrito
             </button>
             <Link to="/" className="carrito__link-catalogo">
-              ← Seguir comprando
+              Seguir comprando
             </Link>
           </div>
         </div>
@@ -200,7 +174,7 @@ function CarritoPage() {
             {items.map((item) => (
               <div key={item.id} className="carrito__resumen-linea">
                 <span>
-                  {item.nombreProducto} × {item.cantidad}
+                  {item.nombreProducto} x {item.cantidad}
                 </span>
                 <span>${item.subtotal?.toLocaleString("es-AR")}</span>
               </div>
@@ -231,9 +205,7 @@ function CarritoPage() {
             </span>
           </div>
 
-          {errorCheckout && (
-            <p className="mensaje-error">{errorCheckout}</p>
-          )}
+          {errorCheckout && <p className="mensaje-error">{errorCheckout}</p>}
 
           <button
             className="carrito__btn-pagar"
@@ -248,4 +220,4 @@ function CarritoPage() {
   );
 }
 
-export default CarritoPage;
+export default CarritoPageUseContextExample;

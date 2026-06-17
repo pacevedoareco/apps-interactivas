@@ -50,7 +50,7 @@ public class CarritoService {
     public CarritoResponseDTO obtenerCarritoAutenticado() {
         Usuario usuario = obtenerUsuarioAutenticado();
         Carrito carrito = obtenerOCrearCarrito(usuario);
-        return mapearCarrito(carrito, false);
+        return mapearCarrito(carrito, true);
     }
 
     public void vaciarCarritoAutenticado() {
@@ -77,10 +77,13 @@ public class CarritoService {
 
         if (itemExistente.isPresent()) {
             CarritoItem item = itemExistente.get();
-            item.setCantidad(item.getCantidad() + request.getCantidad());
+            int nuevaCantidad = item.getCantidad() + request.getCantidad();
+            validarStockDisponible(producto, nuevaCantidad);
+            item.setCantidad(nuevaCantidad);
             item.setPrecioUnitario(producto.getPrecio());
             item.calcularSubtotal();
         } else {
+            validarStockDisponible(producto, request.getCantidad());
             CarritoItem nuevoItem = CarritoItem.builder()
                     .carrito(carrito)
                     .producto(producto)
@@ -93,7 +96,7 @@ public class CarritoService {
 
         carrito.setEstado(EstadoCarrito.ACTIVO);
         carrito.recalcularTotal();
-        return mapearCarrito(carritoRepository.save(carrito), false);
+        return mapearCarrito(carritoRepository.save(carrito), true);
     }
 
     public CarritoResponseDTO modificarCantidadItem(Long itemId, ModificarItemRequest request) {
@@ -103,13 +106,14 @@ public class CarritoService {
         Carrito carrito = obtenerOCrearCarrito(usuario);
 
         CarritoItem item = buscarItemEnCarrito(carrito, itemId);
+        validarStockDisponible(item.getProducto(), request.getCantidad());
         item.setCantidad(request.getCantidad());
         item.setPrecioUnitario(item.getProducto().getPrecio());
         item.calcularSubtotal();
 
         carrito.setEstado(EstadoCarrito.ACTIVO);
         carrito.recalcularTotal();
-        return mapearCarrito(carritoRepository.save(carrito), false);
+        return mapearCarrito(carritoRepository.save(carrito), true);
     }
 
     public CarritoResponseDTO eliminarItem(Long itemId) {
@@ -123,7 +127,7 @@ public class CarritoService {
 
         carrito.setEstado(EstadoCarrito.ACTIVO);
         carrito.recalcularTotal();
-        return mapearCarrito(carritoRepository.save(carrito), false);
+        return mapearCarrito(carritoRepository.save(carrito), true);
     }
 
     public CarritoResumenResponseDTO obtenerResumenCheckout() {
@@ -208,6 +212,14 @@ public class CarritoService {
     private void validarCantidad(Integer cantidad) {
         if (cantidad == null || cantidad <= 0) {
             throw new IllegalArgumentException("La cantidad debe ser mayor a cero");
+        }
+    }
+
+    private void validarStockDisponible(Producto producto, Integer cantidadSolicitada) {
+        if (producto.getStock() != null && cantidadSolicitada > producto.getStock()) {
+            throw new IllegalArgumentException(
+                    "Stock insuficiente para " + producto.getNombre() + ". Solo quedan " + producto.getStock() + " unidades."
+            );
         }
     }
 
