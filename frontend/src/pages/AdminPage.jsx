@@ -139,12 +139,12 @@ function AdminPage() {
 
       <section className="admin-page__intro">
         <p>
-          {usuario ? `Hola, ${usuario.nombre}.` : "Vista de administrador."} Desde aca podes monitorear el
-          catalogo completo, incluidas publicaciones pausadas o eliminadas.
+          {usuario ? `Hola, ${usuario.nombre}.` : "Vista de administrador."} Desde acá podés monitorear el
+          catálogo completo, incluidas publicaciones pausadas o eliminadas.
         </p>
         <p>
-          El home publico sigue mostrando solo publicaciones activas. El estado de publicacion ahora se
-          controla y revisa en esta seccion.
+          El home público sigue mostrando solo publicaciones activas. El estado de publicación ahora se
+          controla y revisa en esta sección.
         </p>
       </section>
 
@@ -157,19 +157,19 @@ function AdminPage() {
             <article className="admin-page__metrica">
               <span className="admin-page__metrica-label">Publicaciones activas</span>
               <strong>{resumen.activas}</strong>
-              <p>Son las que hoy aparecen en el home publico.</p>
+              <p>Son las que hoy aparecen en el home público.</p>
             </article>
 
             <article className="admin-page__metrica">
               <span className="admin-page__metrica-label">Publicaciones pausadas</span>
               <strong>{resumen.pausadas}</strong>
-              <p>Quedaron fuera del catalogo publico pero siguen registradas.</p>
+              <p>Quedaron fuera del catálogo publico pero siguen registradas.</p>
             </article>
 
             <article className="admin-page__metrica">
               <span className="admin-page__metrica-label">Publicaciones sin stock</span>
               <strong>{resumen.sinStock}</strong>
-              <p>Sirve para detectar productos que requieren reposicion.</p>
+              <p>Sirve para detectar productos que requieren reposición.</p>
             </article>
 
             <article className="admin-page__metrica">
