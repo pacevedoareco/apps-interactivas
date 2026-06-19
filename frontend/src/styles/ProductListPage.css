@@ -253,6 +253,9 @@
 }
 
 .product-list__btn-secundario {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-height: 46px;
   padding: 0 20px;
   border: 1px solid rgba(var(--color-blanco-rgb), 0.18);
@@ -261,6 +264,7 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-size: var(--font-size-detalle);
+  text-decoration: none;
 }
 
 .product-list__paginacion p {

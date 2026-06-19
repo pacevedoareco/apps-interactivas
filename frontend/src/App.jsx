@@ -14,6 +14,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import CarritoPage from "./pages/CarritoPage";
+import FavoritosPage from "./pages/FavoritosPage";
 import MisPedidosPage from "./pages/MisPedidosPage";
 import MisProductosPage from "./pages/MisProductosPage";
 import PerfilPage from "./pages/PerfilPage";
@@ -47,6 +48,14 @@ function AppContent() {
           element={(
             <ProtectedRoute>
               <CarritoPage />
+            </ProtectedRoute>
+          )}
+        />
+        <Route
+          path="/mis-favoritos"
+          element={(
+            <ProtectedRoute>
+              <FavoritosPage />
             </ProtectedRoute>
           )}
         />

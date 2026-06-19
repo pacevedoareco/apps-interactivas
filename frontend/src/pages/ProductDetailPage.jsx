@@ -130,7 +130,7 @@ function ProductDetailPage() {
   const handleAgregarAlCarrito = async () => {
     if (!token) {
       navigate(`/login?redirect=${encodeURIComponent(`/productos/${id}`)}`, {
-        state: { message: "Inicia sesion para agregar productos al carrito." },
+        state: { message: "Inicia sesión para agregar productos al carrito." },
       });
       return;
     }
@@ -164,7 +164,7 @@ function ProductDetailPage() {
   return (
     <div className="product-detail">
       <div className="product-detail__header">
-        <Link to="/" className="product-detail__volver">← Volver a Coleccion</Link>
+        <Link to="/" className="product-detail__volver">← Volver a la colección</Link>
       </div>
 
       <div className="product-detail__contenido">
@@ -188,7 +188,7 @@ function ProductDetailPage() {
           <p className="product-detail__descripcion">{producto.descripcion}</p>
 
           <div className="product-detail__meta">
-            <p><strong>Categorias:</strong> {producto.categorias.join(", ")}</p>
+            <p><strong>Categorías:</strong> {producto.categorias.join(", ")}</p>
             {vendedor && <p><strong>Vendido por:</strong> {vendedor.nombre} {vendedor.apellido}</p>}
           </div>
 
@@ -215,11 +215,11 @@ function ProductDetailPage() {
                 )}
                 {mensajeCarrito === "stock" && (
                   <p className="mensaje-error">
-                    Ya tenes {cantidadEnCarrito} en el carrito. No podes superar el stock disponible ({producto.stock}).
+                    Ya tenés {cantidadEnCarrito} en el carrito. No podés superar el stock disponible ({producto.stock}).
                   </p>
                 )}
                 {mensajeCarrito === "error" && (
-                  <p className="mensaje-error">No se pudo agregar al carrito. Intenta de nuevo.</p>
+                  <p className="mensaje-error">No se pudo agregar al carrito. Intentá de nuevo.</p>
                 )}
               </div>
 
@@ -228,7 +228,7 @@ function ProductDetailPage() {
                 onClick={handleAgregarAlCarrito}
                 disabled={token && (limiteAlcanzado || disponibleActual === 0)}
               >
-                {token ? "Agregar al carrito" : "Inicia sesion para comprar"}
+                {token ? "Agregar al carrito" : "Inicia sesión para comprar"}
               </button>
 
               <div className="product-detail__acciones-carrito">
@@ -249,10 +249,10 @@ function ProductDetailPage() {
       {relacionados.length > 0 && (
         <section className="product-detail__relacionados" aria-label="Otras publicaciones relacionadas">
           <div className="product-detail__relacionados-header">
-            <span className="product-detail__relacionados-eyebrow">Segui explorando</span>
+            <span className="product-detail__relacionados-eyebrow">Seguí explorando</span>
             <h2>Otras publicaciones que te pueden interesar</h2>
             <p>
-              Te mostramos opciones del mismo vendedor, de categorias parecidas o destacadas del catalogo.
+              Te mostramos opciones del mismo vendedor, de categorías parecidas o destacadas del catálogo.
             </p>
           </div>
           <div className="product-detail__relacionados-grid">

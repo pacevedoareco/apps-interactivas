@@ -63,6 +63,7 @@ function Navbar() {
 
             {cuentaAbierta && (
               <div className="navbar__dropdown-menu">
+                <Link to="/mis-favoritos" className="navbar__dropdown-item">Mis Favoritos</Link>
                 <Link to="/mis-productos" className="navbar__dropdown-item">Mis Productos</Link>
                 <Link to="/mis-pedidos" className="navbar__dropdown-item">Mis Pedidos</Link>
                 <Link to="/perfil" className="navbar__dropdown-item">Mi Perfil</Link>
