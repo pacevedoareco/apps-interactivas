@@ -26,3 +26,4 @@ El proyecto sigue una arquitectura en capas, separando claramente las responsabi
 - Dominio (Models + DTOs): Entidades JPA mapeadas a tablas y DTOs para transferir datos sin exponer la entidad.
 - Seguridad (Security): Spring Security con JWT para autenticación y autorización basada en roles.
 - Manejo de Excepciones: @ControllerAdvice con excepciones personalizadas para respuestas HTTP consistentes.
+- El frontend fue desarrollado con React.
