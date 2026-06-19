@@ -3,6 +3,7 @@ package com.uade.tpo.e_commerce3.service;
 import com.uade.tpo.e_commerce3.dto.CrearPedidoRequestDTO;
 import com.uade.tpo.e_commerce3.dto.ItemPedidoResponseDTO;
 import com.uade.tpo.e_commerce3.dto.PedidoResponseDTO;
+import com.uade.tpo.e_commerce3.exception.UsuarioNotFoundException;
 import com.uade.tpo.e_commerce3.model.EstadoPedido;
 import com.uade.tpo.e_commerce3.model.ItemPedido;
 import com.uade.tpo.e_commerce3.model.Pedido;
@@ -10,6 +11,8 @@ import com.uade.tpo.e_commerce3.model.Usuario;
 import com.uade.tpo.e_commerce3.repository.ItemPedidoRepository;
 import com.uade.tpo.e_commerce3.repository.PedidoRepository;
 import com.uade.tpo.e_commerce3.repository.UsuarioRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import com.uade.tpo.e_commerce3.model.Producto;
 import com.uade.tpo.e_commerce3.repository.ProductoRepository;
@@ -38,6 +41,21 @@ public class PedidoService {
                         .stream()
                         .map(this::convertirAPedidoResponseDTO)
                         .collect(Collectors.toList());
+        }
+
+        public List<PedidoResponseDTO> obtenerMisPedidos() {
+                Usuario usuario = obtenerUsuarioAutenticado();
+                return pedidoRepository.findByUsuario(usuario)
+                        .stream()
+                        .map(this::convertirAPedidoResponseDTO)
+                        .collect(Collectors.toList());
+        }
+
+        private Usuario obtenerUsuarioAutenticado() {
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                String email = authentication.getName();
+                return usuarioRepository.findByEmail(email)
+                        .orElseThrow(() -> new UsuarioNotFoundException(email));
         }
 
         public PedidoResponseDTO obtenerPorId(Long id) {

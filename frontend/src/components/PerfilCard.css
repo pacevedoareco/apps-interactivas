@@ -1,0 +1,91 @@
+.perfil-card {
+  background: var(--color-form-bg);
+  border: 1px solid var(--color-borde);
+  border-radius: 2px;
+  padding: var(--espaciado-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaciado-md);
+}
+
+.perfil-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.perfil-card__titulo {
+  font-family: var(--font-display);
+  font-size: var(--font-size-subtitulo);
+  color: var(--color-negro);
+  margin: 0;
+}
+
+.perfil-card__editar {
+  background: none;
+  border: 1px solid var(--color-verde-petroleo);
+  color: var(--color-verde-petroleo);
+  font-size: var(--font-size-detalle);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 1px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.perfil-card__editar:hover {
+  background: var(--color-verde-petroleo);
+  color: var(--color-blanco);
+}
+
+.perfil-card__datos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaciado-sm);
+  color: var(--color-negro);
+  font-size: var(--font-size-texto);
+}
+
+.perfil-card__datos p {
+  margin: 0;
+}
+
+.perfil-card form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaciado-md);
+}
+
+.perfil-card__acciones {
+  display: flex;
+  gap: var(--espaciado-md);
+}
+
+.perfil-card__btn {
+  flex: 1;
+  background: var(--color-verde-petroleo);
+  color: var(--color-blanco);
+  border: 1px solid var(--color-verde-claro);
+  padding: 10px;
+  font-size: var(--font-size-detalle);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-radius: 1px;
+  transition: background 0.2s ease;
+}
+
+.perfil-card__btn:hover {
+  background: var(--color-verde-claro);
+}
+
+.perfil-card__btn--secundario {
+  background: transparent;
+  color: var(--color-negro);
+  border: 1px solid var(--color-borde);
+}
+
+.perfil-card__btn--secundario:hover {
+  background: var(--color-borde);
+}

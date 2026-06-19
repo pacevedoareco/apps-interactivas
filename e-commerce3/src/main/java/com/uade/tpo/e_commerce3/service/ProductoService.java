@@ -1,10 +1,15 @@
 package com.uade.tpo.e_commerce3.service;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.uade.tpo.e_commerce3.dto.ProductoRequestDTO;
@@ -12,6 +17,7 @@ import com.uade.tpo.e_commerce3.dto.ProductoResponseDTO;
 import com.uade.tpo.e_commerce3.exception.PrecioNegativoException;
 import com.uade.tpo.e_commerce3.exception.ProductoNotFoundException;
 import com.uade.tpo.e_commerce3.exception.ResourceNotFoundException;
+import com.uade.tpo.e_commerce3.exception.UsuarioNotFoundException;
 import com.uade.tpo.e_commerce3.model.Categoria;
 import com.uade.tpo.e_commerce3.model.CondicionPublicacion;
 import com.uade.tpo.e_commerce3.model.EstadoProducto;
@@ -33,16 +39,10 @@ public class ProductoService {
     private final CategoriaRepository categoriaRepository;
     private final UsuarioRepository usuarioRepository;
 
-    /*
-     * Lógica para: POST /api/productos
-     * Crea una nueva publicación de producto.
-     * Valida los datos recibidos, busca el vendedor, asocia las categorías,
-     * asigna fecha de publicación automática y guarda el producto en la base.
-     */
     public ProductoResponseDTO crearProducto(ProductoRequestDTO request) {
         validarProducto(request);
 
-        Usuario vendedor = obtenerVendedor(request.getVendedorId());
+        Usuario vendedor = obtenerUsuarioAutenticado();
         Set<Categoria> categorias = obtenerCategorias(request.getCategoriasIds());
 
         Producto producto = new Producto();
@@ -51,6 +51,7 @@ public class ProductoService {
         producto.setPrecio(request.getPrecio());
         producto.setStock(request.getStock());
         producto.setMarca(request.getMarca());
+        producto.setImagenUrl(normalizarImagenUrl(request.getImagenUrl()));
         producto.setFechaPublicacion(LocalDate.now());
         producto.setEstadoProducto(obtenerEstadoProducto(request.getEstadoProducto()));
         producto.setCondicionPublicacion(obtenerCondicionPublicacion(request.getCondicionPublicacion()));
@@ -58,27 +59,37 @@ public class ProductoService {
         producto.setCategorias(categorias);
 
         Producto guardado = productoRepository.save(producto);
-
         return mapToProductoResponseDTO(guardado);
     }
 
-    /*
-     * Lógica para: GET /api/productos
-     * Devuelve el listado completo de productos.
-     * Se usa ProductoResponseDTO para no exponer directamente la entidad.
-     */
     public List<ProductoResponseDTO> getAllProductos() {
-        return productoRepository.findAll()
+        return productoRepository.findByCondicionPublicacion(CondicionPublicacion.ACTIVA)
                 .stream()
                 .map(this::mapToProductoResponseDTO)
                 .collect(Collectors.toList());
     }
 
-    /*
-     * Lógica para: GET /api/productos/{id}
-     * Devuelve el detalle de un producto específico.
-     * Si el producto no existe, lanza ProductoNotFoundException.
-     */
+    public List<ProductoResponseDTO> getMisProductos() {
+        Usuario vendedor = obtenerUsuarioAutenticado();
+        return productoRepository.findByVendedorId(vendedor.getId())
+                .stream()
+                .filter(producto -> producto.getCondicionPublicacion() != CondicionPublicacion.ELIMINADA)
+                .map(this::mapToProductoResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductoResponseDTO> getAllProductosAdmin() {
+        return productoRepository.findAll()
+                .stream()
+                .sorted(
+                        Comparator
+                                .comparing(Producto::getFechaPublicacion, Comparator.nullsLast(Comparator.reverseOrder()))
+                                .thenComparing(Producto::getIdProducto, Comparator.nullsLast(Comparator.reverseOrder()))
+                )
+                .map(this::mapToProductoResponseDTO)
+                .collect(Collectors.toList());
+    }
+
     public ProductoResponseDTO getProductoById(Long id) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new ProductoNotFoundException(id));
@@ -86,18 +97,17 @@ public class ProductoService {
         return mapToProductoResponseDTO(producto);
     }
 
-    /*
-     * Lógica para: PUT /api/productos/{id}
-     * Actualiza los datos de un producto existente.
-     * Revalida precio, stock, vendedor y categorías antes de guardar los cambios.
-     */
     public ProductoResponseDTO updateProducto(Long id, ProductoRequestDTO request) {
         validarProducto(request);
 
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new ProductoNotFoundException(id));
 
-        Usuario vendedor = obtenerVendedor(request.getVendedorId());
+        Usuario usuarioActual = obtenerUsuarioAutenticado();
+        if (!producto.getVendedor().getId().equals(usuarioActual.getId())) {
+            throw new IllegalArgumentException("No tenes permiso para editar este producto");
+        }
+
         Set<Categoria> categorias = obtenerCategorias(request.getCategoriasIds());
 
         producto.setNombre(request.getNombre());
@@ -105,33 +115,28 @@ public class ProductoService {
         producto.setPrecio(request.getPrecio());
         producto.setStock(request.getStock());
         producto.setMarca(request.getMarca());
+        producto.setImagenUrl(normalizarImagenUrl(request.getImagenUrl()));
         producto.setEstadoProducto(obtenerEstadoProducto(request.getEstadoProducto()));
         producto.setCondicionPublicacion(obtenerCondicionPublicacion(request.getCondicionPublicacion()));
-        producto.setVendedor(vendedor);
         producto.setCategorias(categorias);
 
         Producto actualizado = productoRepository.save(producto);
-
         return mapToProductoResponseDTO(actualizado);
     }
 
-    /*
-     * Lógica para: DELETE /api/productos/{id}
-     * Realiza una baja lógica del producto.
-     * No elimina físicamente el registro para evitar problemas con futuras
-     * relaciones de carrito, pedidos o historial de compras.
-     */
     public void deleteProducto(Long id) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new ProductoNotFoundException(id));
+
+        Usuario usuarioActual = obtenerUsuarioAutenticado();
+        if (!producto.getVendedor().getId().equals(usuarioActual.getId())) {
+            throw new IllegalArgumentException("No tenes permiso para eliminar este producto");
+        }
 
         producto.setCondicionPublicacion(CondicionPublicacion.ELIMINADA);
         productoRepository.save(producto);
     }
 
-    /*
-     * Valida los datos obligatorios de un producto antes de crear o actualizar.
-     */
     private void validarProducto(ProductoRequestDTO request) {
         if (request.getNombre() == null || request.getNombre().isBlank()) {
             throw new IllegalArgumentException("El nombre del producto es obligatorio");
@@ -145,38 +150,30 @@ public class ProductoService {
             throw new IllegalArgumentException("El stock no puede ser negativo");
         }
 
-        if (request.getVendedorId() == null) {
-            throw new IllegalArgumentException("El producto debe tener un vendedor");
-        }
-
         if (request.getCategoriasIds() == null || request.getCategoriasIds().isEmpty()) {
-            throw new IllegalArgumentException("El producto debe tener al menos una categoría");
+            throw new IllegalArgumentException("El producto debe tener al menos una categoria");
+        }
+
+        if (request.getImagenUrl() != null && !request.getImagenUrl().isBlank()) {
+            try {
+                URI uri = new URI(request.getImagenUrl().trim());
+                String scheme = uri.getScheme();
+                if (scheme == null || (!scheme.equalsIgnoreCase("http") && !scheme.equalsIgnoreCase("https"))) {
+                    throw new IllegalArgumentException("La imagen debe ser una URL valida http o https");
+                }
+            } catch (URISyntaxException exception) {
+                throw new IllegalArgumentException("La imagen debe ser una URL valida http o https");
+            }
         }
     }
 
-    /*
-     * Busca el usuario vendedor asociado al producto.
-     * Si no existe, devuelve error 404 mediante ResourceNotFoundException.
-     */
-    private Usuario obtenerVendedor(Long vendedorId) {
-        return usuarioRepository.findById(vendedorId)
-                .orElseThrow(() -> new ResourceNotFoundException("Vendedor no encontrado con id: " + vendedorId));
-    }
-
-    /*
-     * Busca las categorías recibidas por id y las asocia al producto.
-     */
     private Set<Categoria> obtenerCategorias(List<Long> categoriasIds) {
         return categoriasIds.stream()
                 .map(id -> categoriaRepository.findById(id)
-                        .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con id: " + id)))
+                        .orElseThrow(() -> new ResourceNotFoundException("Categoria no encontrada con id: " + id)))
                 .collect(Collectors.toSet());
     }
 
-    /*
-     * Define el estado del producto.
-     * Si no se informa, por defecto se asigna NUEVO.
-     */
     private EstadoProducto obtenerEstadoProducto(String estadoProducto) {
         if (estadoProducto == null || estadoProducto.isBlank()) {
             return EstadoProducto.NUEVO;
@@ -185,10 +182,6 @@ public class ProductoService {
         return EstadoProducto.valueOf(estadoProducto);
     }
 
-    /*
-     * Define la condición de publicación.
-     * Si no se informa, por defecto se asigna ACTIVA.
-     */
     private CondicionPublicacion obtenerCondicionPublicacion(String condicionPublicacion) {
         if (condicionPublicacion == null || condicionPublicacion.isBlank()) {
             return CondicionPublicacion.ACTIVA;
@@ -197,10 +190,6 @@ public class ProductoService {
         return CondicionPublicacion.valueOf(condicionPublicacion);
     }
 
-    /*
-     * Convierte la entidad Producto en ProductoResponseDTO.
-     * Esto evita exponer directamente la entidad JPA en las respuestas HTTP.
-     */
     private ProductoResponseDTO mapToProductoResponseDTO(Producto producto) {
         return ProductoResponseDTO.builder()
                 .idProducto(producto.getIdProducto())
@@ -209,6 +198,7 @@ public class ProductoService {
                 .precio(producto.getPrecio())
                 .stock(producto.getStock())
                 .marca(producto.getMarca())
+                .imagenUrl(producto.getImagenUrl())
                 .estadoProducto(producto.getEstadoProducto() != null ? producto.getEstadoProducto().name() : null)
                 .condicionPublicacion(producto.getCondicionPublicacion() != null ? producto.getCondicionPublicacion().name() : null)
                 .fechaPublicacion(producto.getFechaPublicacion())
@@ -220,5 +210,24 @@ public class ProductoService {
                                 .collect(Collectors.toList())
                 )
                 .build();
+    }
+
+    private String normalizarImagenUrl(String imagenUrl) {
+        if (imagenUrl == null || imagenUrl.isBlank()) {
+            return null;
+        }
+
+        return imagenUrl.trim();
+    }
+
+    private Usuario obtenerUsuarioAutenticado() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getName() == null) {
+            throw new IllegalArgumentException("No hay usuario autenticado");
+        }
+
+        String email = authentication.getName();
+        return usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new UsuarioNotFoundException(email));
     }
 }

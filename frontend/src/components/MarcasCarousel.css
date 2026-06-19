@@ -1,0 +1,118 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital@0;1&family=Playfair+Display:ital@0;1&family=Cinzel&family=Marcellus&display=swap');
+
+.marcas-carousel {
+  padding: var(--espaciado-lg) 0 0;
+  border-top: 1px solid var(--color-borde);
+  overflow: hidden;
+}
+
+.marcas-carousel__titulo {
+  text-align: center;
+  font-size: var(--font-size-detalle);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-gris);
+  margin: 0 0 var(--espaciado-sm) 0;
+}
+
+.marcas-carousel__pista {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  animation: marcas-scroll 60s linear infinite;
+}
+
+.marcas-carousel__item {
+  white-space: nowrap;
+  line-height: 1;
+  margin-right: var(--espaciado-xl);
+}
+
+@keyframes marcas-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Estilos variados: tipografía, tamaño, color y subrayado distintos entre sí */
+
+.marcas-carousel__estilo1 {
+  font-family: "Playfair Display", serif;
+  font-size: 28px;
+  font-style: italic;
+  color: var(--color-blanco);
+  letter-spacing: 0.02em;
+}
+
+.marcas-carousel__estilo2 {
+  font-family: "Cinzel", serif;
+  font-size: 18px;
+  letter-spacing: 0.3em;
+  color: #d4af6a;
+  border-bottom: 1px solid #d4af6a;
+  padding-bottom: 6px;
+}
+
+.marcas-carousel__estilo3 {
+  font-family: "Marcellus", serif;
+  font-size: 22px;
+  color: #c9c9c9;
+  letter-spacing: 0.08em;
+}
+
+.marcas-carousel__estilo4 {
+  font-family: "Cinzel", serif;
+  font-size: 15px;
+  letter-spacing: 0.35em;
+  color: var(--color-verde-claro);
+  border-bottom: 1px solid rgba(31, 111, 107, 0.4);
+  padding-bottom: 6px;
+}
+
+.marcas-carousel__estilo5 {
+  font-family: "Cormorant Garamond", serif;
+  font-style: italic;
+  font-size: 32px;
+  color: #e8e3d8;
+}
+
+.marcas-carousel__estilo6 {
+  font-family: "Playfair Display", serif;
+  font-size: 17px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #b8b8b8;
+  border-bottom: 1px solid #b8b8b8;
+  padding-bottom: 6px;
+}
+
+.marcas-carousel__estilo7 {
+  font-family: "Marcellus", serif;
+  font-size: 24px;
+  color: #d4af6a;
+  letter-spacing: 0.05em;
+}
+
+@media (max-width: 700px) {
+  .marcas-carousel__pista {
+    animation-duration: 40s;
+  }
+
+  .marcas-carousel__item {
+    margin-right: var(--espaciado-lg);
+  }
+
+  .marcas-carousel__estilo1,
+  .marcas-carousel__estilo5 {
+    font-size: 22px;
+  }
+
+  .marcas-carousel__estilo3,
+  .marcas-carousel__estilo7 {
+    font-size: 18px;
+  }
+}

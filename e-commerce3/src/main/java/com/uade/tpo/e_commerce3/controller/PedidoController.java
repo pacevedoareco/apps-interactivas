@@ -25,6 +25,12 @@ public class PedidoController {
         return ResponseEntity.ok(pedidos);
     }
 
+    @GetMapping("/mis-pedidos")
+    public ResponseEntity<List<PedidoResponseDTO>> obtenerMisPedidos() {
+        List<PedidoResponseDTO> pedidos = pedidoService.obtenerMisPedidos();
+        return ResponseEntity.ok(pedidos);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<PedidoResponseDTO> obtenerPorId(@PathVariable Long id) {
         PedidoResponseDTO pedido = pedidoService.obtenerPorId(id);

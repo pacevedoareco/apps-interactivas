@@ -1,5 +1,8 @@
 package com.uade.tpo.e_commerce3.config;
 
+import java.util.List;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -12,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 
 import com.uade.tpo.e_commerce3.exception.UsuarioNotFoundException;
 import com.uade.tpo.e_commerce3.model.Role;
@@ -48,21 +52,26 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                    .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                     .csrf(csrf -> csrf.disable())
                     .authorizeHttpRequests(auth -> auth
                         // Públicos - Register/Login
                         .requestMatchers("/api/auth/**").permitAll()
                         
-                        // Productos - GET Público, resto authenticated
+                        // Productos - mis-productos requiere autenticación, ver el listado y el detalle son públicos, crear/editar/eliminar requieren autenticación
+                        .requestMatchers(HttpMethod.GET, "/api/productos/mis-productos").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/productos").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/productos/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/productos/**").authenticated()
                         
-                        // Usuarios - GET público para ver perfil de vendedor, resto autenticado
+                        // Usuarios - /me requiere autenticación, el resto de GET es público para ver perfil de vendedor
+                        .requestMatchers("/api/usuarios/me").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/usuarios/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/api/usuarios/**").authenticated()
                         
+                        // Categorías - GET público para clasificar y filtrar productos
+                        .requestMatchers(HttpMethod.GET, "/api/categorias/**").permitAll()
+
                          // Carrito
                         .requestMatchers("/api/carrito/**").authenticated()
 
@@ -87,5 +96,18 @@ public class SecurityConfig {
 
         return http.build();
     }
+
+        @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
 }
 
