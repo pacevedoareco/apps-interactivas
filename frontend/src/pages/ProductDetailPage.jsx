@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { obtenerProductoPorId, obtenerProductos } from "../services/productoService";
 import { agregarAlCarritoThunk } from "../store/slices/carritoSlice";
 import { AuthContext } from "../context/AuthContext";
+import { API_CONFIG } from "../config/api.js";
 import ProductCard from "../components/ProductCard";
 import Spinner from "../components/Spinner";
 import productPlaceholder from "../assets/product-placeholder.svg";
@@ -101,7 +102,7 @@ function ProductDetailPage() {
         setProducto(dataProducto);
         setRelacionados(obtenerPublicacionesRelacionadas(dataProducto, catalogo));
 
-        const responseVendedor = await fetch(`http://localhost:8080/api/usuarios/${dataProducto.vendedorId}`);
+        const responseVendedor = await fetch(`${API_CONFIG.ENDPOINTS.USUARIOS}/${dataProducto.vendedorId}`);
         if (responseVendedor.ok) {
           const dataVendedor = await responseVendedor.json();
           setVendedor(dataVendedor);

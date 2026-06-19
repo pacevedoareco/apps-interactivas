@@ -8,7 +8,7 @@ function ProtectedRoute({ children, requireAdmin = false }) {
   const location = useLocation();
 
   if (authLoading) {
-    return <Spinner texto="Validando sesion..." />;
+    return <Spinner texto="Validando sesión..." />;
   }
 
   if (!token) {
@@ -17,7 +17,7 @@ function ProtectedRoute({ children, requireAdmin = false }) {
         to={`/login?redirect=${encodeURIComponent(location.pathname)}`}
         replace
         state={{
-          message: "Necesitas iniciar sesion para acceder a esta seccion.",
+          message: "Necesitas iniciar sesión para acceder a esta sección.",
         }}
       />
     );

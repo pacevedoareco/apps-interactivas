@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:8080/api/pedidos";
+import { API_CONFIG } from "../config/api.js";
+
+const API_URL = API_CONFIG.ENDPOINTS.PEDIDOS;
 
 function getHeaders() {
   const token = localStorage.getItem("token");

@@ -42,7 +42,7 @@ function Navbar() {
               ? undefined
               : {
                 from: location.pathname,
-                message: "Inicia sesion para crear una nueva publicacion.",
+                message: "Inicia sesión para crear una nueva publicación.",
               }
           }
           className="navbar__link"
@@ -80,7 +80,7 @@ function Navbar() {
           </button>
         ) : (
           <>
-            <Link to="/login" className="navbar__link">Iniciar Sesion</Link>
+            <Link to="/login" className="navbar__link">Iniciar Sesión</Link>
             <Link to="/register" className="navbar__btn">Registrarse</Link>
           </>
         )}

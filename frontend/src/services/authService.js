@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:8080/api/auth";
+import { API_CONFIG } from "../config/api.js";
+
+const API_URL = API_CONFIG.ENDPOINTS.AUTH;
 
 export async function registrarUsuario(registerRequest) {
   const response = await fetch(`${API_URL}/register`, {

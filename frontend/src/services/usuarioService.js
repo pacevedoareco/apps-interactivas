@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:8080/api/usuarios";
+import { API_CONFIG } from "../config/api.js";
+
+const API_URL = API_CONFIG.ENDPOINTS.USUARIOS;
 
 export async function obtenerUsuarioActual() {
     const token = localStorage.getItem("token");

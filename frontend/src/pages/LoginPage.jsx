@@ -7,7 +7,7 @@ import "../styles/AuthPages.css";
 
 const camposFormulario = [
   { label: "Email", name: "email", type: "email" },
-  { label: "Contrasena", name: "password", type: "password" },
+  { label: "Contraseña", name: "password", type: "password" },
 ];
 
 const valoresIniciales = {
@@ -38,11 +38,11 @@ function LoginPage() {
     if (!formData.email) {
       erroresEncontrados.email = "El email es obligatorio";
     } else if (!emailRegex.test(formData.email)) {
-      erroresEncontrados.email = "El email no tiene un formato valido";
+      erroresEncontrados.email = "El email no tiene un formato válido";
     }
 
     if (!formData.password) {
-      erroresEncontrados.password = "La contrasena es obligatoria";
+      erroresEncontrados.password = "La contraseña es obligatoria";
     }
 
     return erroresEncontrados;
@@ -71,7 +71,7 @@ function LoginPage() {
   return (
     <div className="auth">
       <form className="auth__form" onSubmit={handleSubmit}>
-        <h1 className="auth__titulo">Iniciar Sesion</h1>
+        <h1 className="auth__titulo">Iniciar Sesión</h1>
 
         {loginMessage && <p className="mensaje-vacio">{loginMessage}</p>}
 

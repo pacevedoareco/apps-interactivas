@@ -6,7 +6,7 @@ function ProductCard({ producto }) {
   const estadoLabel = {
     NUEVO: "Nuevo",
     USADO: "Usado",
-    EDICION_LIMITADA: "Edicion limitada",
+    EDICION_LIMITADA: "Edición limitada",
   };
 
   return (

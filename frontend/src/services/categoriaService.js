@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:8080/api/categorias";
+import { API_CONFIG } from "../config/api.js";
+
+const API_URL = API_CONFIG.ENDPOINTS.CATEGORIAS;
 
 export async function obtenerCategorias() {
   const response = await fetch(API_URL);

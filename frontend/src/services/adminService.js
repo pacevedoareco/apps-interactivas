@@ -1,4 +1,6 @@
-const API_BASE_URL = "http://localhost:8080/api/admin";
+import { API_CONFIG } from "../config/api.js";
+
+const API_BASE_URL = API_CONFIG.ENDPOINTS.ADMIN;
 
 function getAuthHeaders() {
   const token = localStorage.getItem("token");
